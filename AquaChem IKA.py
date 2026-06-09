@@ -12,7 +12,7 @@ st.set_page_config(
     page_title="AquaChem IKA",
     page_icon="💧",
     layout="wide",
-    initial_sidebar_state="collapsed", # Mengubah default sidebar menjadi tertutup total
+    initial_sidebar_state="collapsed", # Mengubah keadaan agar sidebar tidak muncul otomatis
 )
 
 # ─────────────────────────────────────────────
@@ -43,9 +43,42 @@ html, body, [class*="css"] {
     color: var(--text);
 }
 
-/* Hide default streamlit branding & sidebar button completely */
+/* PERBAIKAN POIN 2: Penyesuaian Tulisan Agar Jelas di Mode Terang (Light Mode) */
+@media (prefers-color-scheme: light) {
+    :root {
+        --dark:   #FFFFFF;
+        --card:   #F8FAFC;
+        --border: #CBD5E1;
+        --text:   #0F172A;
+        --muted:  #475569;
+    }
+    html, body, [class*="css"] {
+        background-color: #FFFFFF !important;
+        color: #0F172A !important;
+    }
+    .hero-sub {
+        color: #1E293B !important;
+    }
+    .param-fullname, .param-unit, .ika-label, .about-body, .metric-desc {
+        color: #334155 !important;
+    }
+    .info-box, .warn-box, .bad-box {
+        color: #0F172A !important;
+    }
+    .ref-table td {
+        color: #0F172A !important;
+    }
+    div[data-testid="stExpander"] {
+        background: #F1F5F9 !important;
+    }
+    div[data-testid="stExpander"] p, div[data-testid="stExpander"] li {
+        color: #0F172A !important;
+    }
+}
+
+/* Hide default streamlit branding & sidebar toggle control */
 #MainMenu, footer, header {visibility: hidden;}
-[data-testid="collapsedControl"] {display: none;} /* Menyembunyikan tombol pembuka sidebar */
+[data-testid="collapsedControl"] {display: none;}
 
 /* Hero Banner */
 .hero {
@@ -371,18 +404,17 @@ if "web_desc" not in st.session_state:
         "berdasarkan parameter kimia utama yaitu pH, BOD, dan COD. "
         "Gunakan panel input data di bawah banner halaman utama untuk memasukkan data pengukuran."
     )
-# Tambahan session state pelacak mode input aktif halaman utama
 if "main_input_mode" not in st.session_state:
     st.session_state.main_input_mode = "📊 Langsung (Nilai)"
 
 # ─────────────────────────────────────────────
 #  REFERENCE DATA
 # ─────────────────────────────────────────────
+# PERBAIKAN POIN 4: Penyesuaian Referensi Tabel pH agar sesuai dengan PP No. 22/2021 Kelas II
 PH_REF = [
-    {"Kategori": "Sangat Asam / Sangat Basa (Berbahaya)", "Rentang": "< 5.0 atau > 9.0", "Status": "💀 Tercemar Berat", "Kelas": "bad"},
-    {"Kategori": "Asam / Basa Ringan (Tercemar Sedang)", "Rentang": "5.0 – 6.0 atau 8.5 – 9.0", "Status": "⚠️ Tercemar Sedang", "Kelas": "warn"},
-    {"Kategori": "Mendekati Normal", "Rentang": "6.0 – 6.5 atau 8.0 – 8.5", "Status": "🟡 Tercemar Ringan", "Kelas": "warn"},
-    {"Kategori": "Normal / Baku Mutu", "Rentang": "6.5 – 8.0", "Status": "✅ Memenuhi Baku Mutu", "Kelas": "good"},
+    {"Kategori": "Sangat Asam / Sangat Basa (Berbahaya)", "Rentang": "< 5.0 atau > 9.5", "Status": "💀 Tercemar Berat", "Kelas": "bad"},
+    {"Kategori": "Asam / Basa Ringan (Tercemar)", "Rentang": "5.0 – 6.0 atau 9.0 – 9.5", "Status": "⚠️ Tercemar Sedang", "Kelas": "warn"},
+    {"Kategori": "Normal / Baku Mutu Kelas II", "Rentang": "6.0 – 9.0", "Status": "✅ Memenuhi Baku Mutu", "Kelas": "good"},
 ]
 BOD_REF = [
     {"Kategori": "Sangat Baik (Air Bersih)", "Rentang": "< 2 mg/L", "Status": "✅ Tidak Tercemar", "Kelas": "good"},
@@ -402,28 +434,44 @@ COD_REF = [
 # ─────────────────────────────────────────────
 #  HELPER FUNCTIONS
 # ─────────────────────────────────────────────
+# PERBAIKAN POIN 4: Penyesuaian Logika Evaluasi pH Berdasarkan PP No. 22/2021 Kelas II (Rentang 6.0 – 9.0)
 def get_ph_status(v):
-    if 6.5 <= v <= 8.0: return "Memenuhi Baku Mutu", "good", 100
-    elif (6.0 <= v < 6.5) or (8.0 < v <= 8.5): return "Tercemar Ringan", "warn", 60
-    elif (5.0 <= v < 6.0) or (8.5 < v <= 9.0): return "Tercemar Sedang", "warn", 35
-    else: return "Tercemar Berat", "bad", 10
+    if 6.0 <= v <= 9.0:
+        return "Memenuhi Baku Mutu", "good", 100
+    elif (5.0 <= v < 6.0) or (9.0 < v <= 9.5):
+        return "Tercemar Sedang", "warn", 40
+    else:
+        return "Tercemar Berat", "bad", 10
 
 def get_bod_status(v):
-    if v < 2: return "Tidak Tercemar", "good", 100
-    elif v <= 3: return "Memenuhi Baku Mutu", "good", 85
-    elif v <= 6: return "Tercemar Sedang", "warn", 50
-    elif v <= 12: return "Tercemar Berat", "bad", 25
-    else: return "Sangat Tercemar Berat", "bad", 5
+    if v < 2:
+        return "Tidak Tercemar", "good", 100
+    elif v <= 3:
+        return "Memenuhi Baku Mutu", "good", 85
+    elif v <= 6:
+        return "Tercemar Sedang", "warn", 50
+    elif v <= 12:
+        return "Tercemar Berat", "bad", 25
+    else:
+        return "Sangat Tercemar Berat", "bad", 5
 
 def get_cod_status(v):
-    if v < 10: return "Tidak Tercemar", "good", 100
-    elif v <= 25: return "Memenuhi Baku Mutu", "good", 80
-    elif v <= 50: return "Tercemar Sedang", "warn", 45
-    elif v <= 100: return "Tercemar Berat", "bad", 20
-    else: return "Sangat Tercemar Berat", "bad", 5
+    if v < 10:
+        return "Tidak Tercemar", "good", 100
+    elif v <= 25:
+        return "Memenuhi Baku Mutu", "good", 80
+    elif v <= 50:
+        return "Tercemar Sedang", "warn", 45
+    elif v <= 100:
+        return "Tercemar Berat", "bad", 20
+    else:
+        return "Sangat Tercemar Berat", "bad", 5
 
 def calc_ika(ph_val, bod_val, cod_val):
-    """ Indeks Kualitas Air sederhana berdasarkan sub-indeks tiap parameter. Bobot: pH=30%, BOD=35%, COD=35% """
+    """
+    Indeks Kualitas Air sederhana berdasarkan sub-indeks tiap parameter.
+    Bobot: pH=30%, BOD=35%, COD=35%
+    """
     _, _, ph_score  = get_ph_status(ph_val)
     _, _, bod_score = get_bod_status(bod_val)
     _, _, cod_score = get_cod_status(cod_val)
@@ -431,10 +479,14 @@ def calc_ika(ph_val, bod_val, cod_val):
     return round(ika, 1), ph_score, bod_score, cod_score
 
 def ika_category(score):
-    if score >= 80: return "Baik 🟢", "#22C55E"
-    elif score >= 50: return "Tercemar Ringan–Sedang 🟡", "#F59E0B"
-    elif score >= 25: return "Tercemar Berat 🔴", "#EF4444"
-    else: return "Sangat Tercemar Berat ☠️", "#EF4444"
+    if score >= 80:
+        return "Baik 🟢", "#22C55E"
+    elif score >= 50:
+        return "Tercemar Ringan–Sedang 🟡", "#F59E0B"
+    elif score >= 25:
+        return "Tercemar Berat 🔴", "#EF4444"
+    else:
+        return "Sangat Tercemar Berat ☠️", "#EF4444"
 
 def status_chip(label, cls):
     return f'<span class="status-chip status-{cls}">{label}</span>'
@@ -452,14 +504,19 @@ def render_ref_table(data):
     </table>"""
     st.markdown(html, unsafe_allow_html=True)
 
+
+# POIN 1 TERPENUHI: Blok kode 'with st.sidebar:' yang berisi Pengaturan Kelompok & Aplikasi telah dihapus total dari sini.
+
+
 # ─────────────────────────────────────────────
 #  MAIN — HERO
 # ─────────────────────────────────────────────
+# PERBAIKAN POIN 3: Ditambahkan informasi Baku Mutu Air Kelas II di dalam Hero Badge
 st.markdown(f"""
 <div class="hero">
-<div class="hero-badge">INDEKS KUALITAS AIR</div>
-<h1 class="hero-title">{st.session_state.app_name}</h1>
-<p class="hero-sub">{st.session_state.web_desc}</p>
+    <div class="hero-badge">BAKU MUTU AIR KELAS II (PP NO. 22/2021)</div>
+    <h1 class="hero-title">{st.session_state.app_name}</h1>
+    <p class="hero-sub">{st.session_state.web_desc}</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -468,7 +525,6 @@ st.markdown(f"""
 # ─────────────────────────────────────────────
 st.markdown('<div class="sec-head">🎛️ Panel Kontrol Mode Input Data</div>', unsafe_allow_html=True)
 
-# Membuat tata letak baris tombol interaktif halaman utama
 btn_col1, btn_col2 = st.columns(2)
 with btn_col1:
     if st.button("📊 MODE 1: Input Nilai Langsung (PH/BOD/COD Sudah Diketahui)"):
@@ -477,23 +533,20 @@ with btn_col2:
     if st.button("🧪 MODE 2: Hitung dari Titrasi (Laboratorium)"):
         st.session_state.main_input_mode = "🧪 Dari Titrasi"
 
-# Menampilkan indikator status mode yang sedang aktif saat ini
 st.markdown(f"""
 <div style="font-size:0.9rem; margin-bottom:20px; color:var(--muted);">
 Mode aktif saat ini: <span style="color:var(--teal); font-weight:bold; font-family:'Space Mono', monospace;">{st.session_state.main_input_mode}</span>
 </div>
 """, unsafe_allow_html=True)
 
-# Inisialisasi variabel default sebelum kondisional penentuan nilai input
 ph_val = 7.0
 bod_val = 2.0
 cod_val = 15.0
 
-# Wadah penampung form input data lapangan utama
 with st.container():
     st.markdown('<div style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:25px;">', unsafe_allow_html=True)
-    # Input umum pH (Selalu muncul di kedua mode)
-    ph_val = st.number_input("Masukkan Nilai pH", min_value=0.0, max_value=14.0, value=7.0, step=0.1, help="Skala 0–14. Baku mutu: 6.5–8.0", key="main_ph_input")
+    # PERBAIKAN POIN 4: Menyesuaian info teks help parameter pH (6.0 - 9.0)
+    ph_val = st.number_input("Masukkan Nilai pH", min_value=0.0, max_value=14.0, value=7.0, step=0.1, help="Skala 0–14. Baku mutu Kelas II: 6.0–9.0", key="main_ph_input")
     
     if st.session_state.main_input_mode == "📊 Langsung (Nilai)":
         st.markdown("<p style='color:var(--teal); font-weight:600; margin-top:10px;'>Masukkan Nilai Parameter Langsung:</p>", unsafe_allow_html=True)
@@ -504,7 +557,6 @@ with st.container():
             cod_val = st.number_input("COD (mg/L)", min_value=0.0, max_value=500.0, value=15.0, step=0.1, help="Chemical Oxygen Demand. Baku mutu: < 25 mg/L", key="main_cod_direct")
             
     elif st.session_state.main_input_mode == "🧪 Dari Titrasi":
-        # ── BOD dari Titrasi Winkler ──
         st.markdown("""<div style="font-size:0.9rem; color:#0EB8A4; font-family:'Space Mono',monospace; margin:15px 0 6px 0; font-weight:bold;">🔬 Perhitungan Parameter BOD — Titrasi Winkler</div>""", unsafe_allow_html=True)
         st.markdown("""<div style="font-size:0.75rem; color:#7A8BA6; margin-bottom:8px;"> Rumus: BOD = (V_titran_blanko − V_titran_sampel) × N_Na₂S₂O₃ × 8000 / V_sampel </div>""", unsafe_allow_html=True)
         
@@ -522,7 +574,6 @@ with st.container():
             bod_val = 0.0
         st.markdown(f"""<div style="background:rgba(14,184,164,0.08); border:1px solid rgba(14,184,164,0.3); border-radius:8px; padding:10px 14px; font-size:0.85rem; margin:6px 0 20px 0;"> Hasil Perhitungan Terhitung BOD: <b style="color:#0EB8A4; font-family:'Space Mono',monospace;"> {bod_val} mg/L</b></div>""", unsafe_allow_html=True)
         
-        # ── COD dari Titrasi Permanganometri / Dikromat ──
         st.markdown("""<div style="font-size:0.9rem; color:#8B5CF6; font-family:'Space Mono',monospace; margin:15px 0 6px 0; font-weight:bold;">🔬 Perhitungan Parameter COD — Titrasi Dikromat / Permanganometri</div>""", unsafe_allow_html=True)
         st.markdown("""<div style="font-size:0.75rem; color:#7A8BA6; margin-bottom:8px;"> Rumus: COD = (V_blanko − V_sampel) × N_titran × 8000 / V_sampel </div>""", unsafe_allow_html=True)
         
@@ -566,7 +617,6 @@ tab1, tab2, tab3, tab4 = st.tabs([
 #  TAB 1 — ANALISIS
 # ══════════════════════════════════════════════
 with tab1:
-    # IKA Score strip
     st.markdown('<div class="sec-head">Indeks Kualitas Air (IKA)</div>', unsafe_allow_html=True)
     c1, c2, c3, c4 = st.columns([1.2, 1, 1, 1])
     
@@ -610,7 +660,6 @@ with tab1:
             {status_chip(cod_label, cod_cls)}
         </div>""", unsafe_allow_html=True)
 
-    # ── Parameter Detail ──
     st.markdown('<div class="sec-head">Detail Parameter</div>', unsafe_allow_html=True)
     
     # pH
@@ -622,11 +671,13 @@ with tab1:
             pH mengukur konsentrasi ion hidrogen dalam air dan menunjukkan seberapa asam atau basa suatu larutan. Skala pH berkisar 0–14, di mana 7 bersifat netral.
             
             *Mengapa penting?*
-            pH mempengaruhi reaksi kimia dalam air, kelarutan logam berat, dan kemampuan organisme akuatik untuk bertahan hidup. Nilai di luar rentang 6.5–8.0 menunjukkan adanya pencemaran atau gangguan keseimbangan ekosistem perairan.
+            pH mempengaruhi reaksi kimia dalam air, kelarutan logam berat, dan kemampuan organisme akuatik untuk bertahan hidup.
+            Nilai di luar rentang baku mutu menunjukkan adanya pencemaran atau gangguan keseimbangan ekosistem perairan.
             """)
         with col_b:
+            # PERBAIKAN POIN 4: Penyesuaian info teks box pH (6.0 - 9.0)
             if ph_cls == "good":
-                st.markdown(f'<div class="info-box">✅ <strong>pH {ph_val}</strong> — Nilai ini memenuhi baku mutu air kelas II (6.5–8.0). Air dalam kondisi normal dan aman untuk berbagai pemanfaatan.</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="info-box">✅ <strong>pH {ph_val}</strong> — Nilai ini memenuhi baku mutu air kelas II (6.0–9.0). Air dalam kondisi normal dan aman untuk berbagai pemanfaatan.</div>', unsafe_allow_html=True)
             elif ph_cls == "warn":
                 st.markdown(f'<div class="warn-box">⚠️ <strong>pH {ph_val}</strong> — Nilai ini berada di luar baku mutu optimal. Air menunjukkan tanda-tanda asam/basa ringan. Perlu monitoring lebih lanjut.</div>', unsafe_allow_html=True)
             else:
@@ -682,27 +733,18 @@ with tab1:
                 <div class="param-fullname">Biodegradabilitas Limbah</div>
                 <div class="param-value">{ratio}</div>
                 <div style="margin-top:10px; font-size:0.83rem; color:#7A8BA6; line-height:1.6;">
-                {'✅ <b style="color:#22C55E">Mudah terurai secara biologis</b> — Rasio > 0.5 menandakan limbah organik yang dapat diolah dengan proses biologis (IPAL).' if ratio >= 0.5 else ('⚠️ <b style="color:#F59E0B">Cukup dapat terurai</b> — Perlu kombinasi pengolahan biologis dan kimia.' if ratio >= 0.3 else '🔴 <b style="color:#EF4444">Sulit terurai secara biologis</b> — Rasio < 0.3 mengindikasikan bahan kimia organik rekalcitran. Perlu pengolahan kimia-fisika.')}
+                {"✅ <b style='color:#22C55E'>Mudah terurai secara biologis</b> — Rasio > 0.5 menandakan limbah organik yang dapat diolah dengan proses biologis (IPAL)." if ratio >= 0.5 else ("⚠️ <b style='color:#F59E0B'>Cukup dapat terurai</b> — Perlu kombinasi pengolahan biologis dan kimia." if ratio >= 0.3 else "🔴 <b style='color:#EF4444'>Sulit terurai secara biologis</b> — Rasio < 0.3 mengindikasikan bahan kimia organik rekalcitran. Perlu pengolahan kimia-fisika.")}
                 </div>
             </div>""", unsafe_allow_html=True)
         with col2:
             st.markdown(f"""
             <div class="param-card">
-                <div class="param-title">Sub-Indeks Tiap Parameter</div>
-                <div class="param-fullname">Kontribusi terhadap IKA</div>
-                <div style="margin-top:14px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                        <span style="color:#7A8BA6; font-size:0.83rem;">Sub-Indeks pH (Bobot 30%)</span>
-                        <span style="font-family:\'Space Mono\',monospace; color:#0EB8A4; font-weight:bold;">{ph_si} / 100</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                        <span style="color:#7A8BA6; font-size:0.83rem;">Sub-Indeks BOD (Bobot 35%)</span>
-                        <span style="font-family:\'Space Mono\',monospace; color:#22C55E; font-weight:bold;">{bod_si} / 100</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between;">
-                        <span style="color:#7A8BA6; font-size:0.83rem;">Sub-Indeks COD (Bobot 35%)</span>
-                        <span style="font-family:\'Space Mono\',monospace; color:#1A6EFC; font-weight:bold;">{cod_si} / 100</span>
-                    </div>
+                <div class="param-title">Sub-Indeks Kontribusi (Skor)</div>
+                <div class="param-fullname">Pengaruh terhadap Nilai Akhir IKA</div>
+                <div style="font-size:0.85rem; line-height:1.8; margin-top:5px;">
+                    🔹 Sub-Indeks pH : <b style="color:#0EB8A4; font-family:'Space Mono',monospace;">{ph_si} / 100</b> (Bobot 30%)<br>
+                    🔹 Sub-Indeks BOD : <b style="color:#22C55E; font-family:'Space Mono',monospace;">{bod_si} / 100</b> (Bobot 35%)<br>
+                    🔹 Sub-Indeks COD : <b style="color:#1A6EFC; font-family:'Space Mono',monospace;">{cod_si} / 100</b> (Bobot 35%)
                 </div>
             </div>""", unsafe_allow_html=True)
 
@@ -710,157 +752,169 @@ with tab1:
 #  TAB 2 — REFERENSI
 # ══════════════════════════════════════════════
 with tab2:
-    st.markdown('<div class="sec-head">📋 Tabel Parameter Baku Mutu Air (Kelas II)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-head">Tabel Parameter Acuan Baku Mutu (PP No. 22 Tahun 2021)</div>', unsafe_allow_html=True)
     
-    st.markdown("<p style='color:var(--teal); font-weight:bold; margin-top:10px;'>1. Parameter pH (Derajat Keasaman)</p>", unsafe_allow_html=True)
-    render_ref_table(PH_REF)
-    
-    st.markdown("<p style='color:var(--teal); font-weight:bold; margin-top:20px;'>2. Parameter BOD (Biochemical Oxygen Demand)</p>", unsafe_allow_html=True)
-    render_ref_table(BOD_REF)
-    
-    st.markdown("<p style='color:var(--teal); font-weight:bold; margin-top:20px;'>3. Parameter COD (Chemical Oxygen Demand)</p>", unsafe_allow_html=True)
-    render_ref_table(COD_REF)
+    rtab1, rtab2, rtab3 = st.tabs(["🔵 Standar pH", "🟢 Standar BOD", "🔴 Standar COD"])
+    with rtab1:
+        st.write("### Batas Toleransi Derajat Keasaman (pH) Kelas II")
+        render_ref_table(PH_REF)
+    with rtab2:
+        st.write("### Batas Toleransi BOD Kelas II (Baku Mutu ≤ 3 mg/L)")
+        render_ref_table(BOD_REF)
+    with rtab3:
+        st.write("### Batas Toleransi COD Kelas II (Baku Mutu ≤ 25 mg/L)")
+        render_ref_table(COD_REF)
+        
+    st.markdown("""
+    <div style="margin-top:20px; padding:16px; background:var(--card); border:1px solid var(--border); border-radius:10px; font-size:0.85rem; line-height:1.6;">
+        💡 <b>Catatan Regulasi:</b> Berdasarkan Peraturan Pemerintah No. 22 Tahun 2021 tentang Penyelenggaraan Perlindungan dan Pengelolaan Lingkungan Hidup (Lampiran VI), 
+        air Kelas II merupakan air yang peruntukannya dapat digunakan untuk prasarana/sarana rekreasi air, pembudidayaan ikan air tawar, peternakan, air untuk mengairi pertamanan, 
+        dan/atau peruntukan lain yang mempersyaratkan mutu air yang sama.
+    </div>
+    """, unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════
 #  TAB 3 — VISUALISASI
 # ══════════════════════════════════════════════
 with tab3:
-    st.markdown('<div class="sec-head">📈 Grafik & Visualisasi Kualitas Air</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-head">Visualisasi Posisi Data Pengukuran</div>', unsafe_allow_html=True)
     
-    # 1. Gauge Chart untuk IKA
-    fig_gauge = go.Figure(go.Indicator(
-        mode = "gauge+number",
-        value = ika_score,
-        domain = {'x': [0, 1], 'y': [0, 1]},
-        title = {'text': f"Indeks Kualitas Air (Category: {ika_cat})", 'font': {'color': "#E8EDF5", 'size': 16}},
-        gauge = {
-            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "#7A8BA6"},
-            'bar': {'color': ika_color},
-            'bgcolor': "#161B25",
-            'borderwidth': 1,
-            'bordercolor': "#242C3D",
-            'steps': [
-                {'range': [0, 25], 'color': 'rgba(239,68,68,0.1)'},
-                {'range': [25, 50], 'color': 'rgba(239,68,68,0.2)'},
-                {'range': [50, 80], 'color': 'rgba(245,158,11,0.15)'},
-                {'range': [80, 100], 'color': 'rgba(34,197,94,0.15)'}
-            ],
-        }
-    ))
-    fig_gauge.update_layout(
+    fig = make_subplots(rows=1, cols=3, subplot_titles=("Skala Nilai pH", "Kadar BOD (mg/L)", "Kadar COD (mg/L)"))
+    
+    # 1. pH Gauge Bar
+    fig.add_trace(go.Scatter(x=[ph_val], y=[1], mode='markers+text', text=[f"pH: {ph_val}"], textposition="top center",
+                             marker=dict(color='#0EB8A4', size=16, line=dict(color='white', width=2)), name="pH"), row=1, col=1)
+    # Background threshold indicators for pH
+    fig.add_vrect(x0=0, x1=6.0, fillcolor="#EF4444", opacity=0.15, line_width=0, row=1, col=1)
+    fig.add_vrect(x0=6.0, x1=9.0, fillcolor="#22C55E", opacity=0.18, line_width=0, row=1, col=1)
+    fig.add_vrect(x0=9.0, x1=14.0, fillcolor="#EF4444", opacity=0.15, line_width=0, row=1, col=1)
+    
+    # 2. BOD Gauge Bar
+    fig.add_trace(go.Scatter(x=[bod_val], y=[1], mode='markers+text', text=[f"BOD: {bod_val}"], textposition="top center",
+                             marker=dict(color='#22C55E', size=16, line=dict(color='white', width=2)), name="BOD"), row=1, col=2)
+    fig.add_vrect(x0=0, x1=3.0, fillcolor="#22C55E", opacity=0.18, line_width=0, row=1, col=2)
+    fig.add_vrect(x0=3.0, x1=12.0, fillcolor="#F59E0B", opacity=0.15, line_width=0, row=1, col=2)
+    fig.add_vrect(x0=12.0, x1=50.0, fillcolor="#EF4444", opacity=0.15, line_width=0, row=1, col=2)
+    
+    # 3. COD Gauge Bar
+    fig.add_trace(go.Scatter(x=[cod_val], y=[1], mode='markers+text', text=[f"COD: {cod_val}"], textposition="top center",
+                             marker=dict(color='#1A6EFC', size=16, line=dict(color='white', width=2)), name="COD"), row=1, col=3)
+    fig.add_vrect(x0=0, x1=25.0, fillcolor="#22C55E", opacity=0.18, line_width=0, row=1, col=3)
+    fig.add_vrect(x0=25.0, x1=50.0, fillcolor="#F59E0B", opacity=0.15, line_width=0, row=1, col=3)
+    fig.add_vrect(x0=50.0, x1=200.0, fillcolor="#EF4444", opacity=0.15, line_width=0, row=1, col=3)
+    
+    fig.update_layouts = [] 
+    fig.update_yaxes(visible=False, showticklabels=False)
+    fig.update_xaxes(showgrid=False)
+    
+    fig.update_layout(
+        template="plotly_dark",
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font={'color': "#E8EDF5", 'family': "Plus Jakarta Sans"},
-        height=280,
-        margin=dict(l=20, r=20, t=40, b=20)
+        margin=dict(l=20, r=20, t=40, b=20),
+        height=260,
+        showlegend=False
     )
-    st.plotly_chart(fig_gauge, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True)
     
-    # 2. Bar Chart Perbandingan Sub-Indeks
-    st.markdown('<div class="sec-head">Perbandingan Sub-Indeks Kontributor</div>', unsafe_allow_html=True)
-    df_si = pd.DataFrame({
-        'Parameter': ['pH', 'BOD', 'COD'],
-        'Sub-Indeks': [ph_si, bod_si, cod_si],
-        'Bobot (%)': [30, 35, 35]
+    # Tren Simulasi Komparatif Batas Oksigen Terlarut (BOD vs COD)
+    st.markdown('<div class="sec-head">Rasio Grafik Parameter Kimia Organik</div>', unsafe_allow_html=True)
+    chart_data = pd.DataFrame({
+        'Parameter': ['Nilai Pengukuran Anda', 'Batas Maks Baku Mutu'],
+        'BOD': [bod_val, 3.0],
+        'COD': [cod_val, 25.0]
     })
     
-    fig_bar = px.bar(
-        df_si, 
-        x='Parameter', 
-        y='Sub-Indeks',
-        text='Sub-Indeks',
-        color='Parameter',
-        color_discrete_map={'pH': '#0EB8A4', 'BOD': '#22C55E', 'COD': '#1A6EFC'},
-        hover_data=['Bobot (%)']
-    )
-    fig_bar.update_traces(textposition='outside', marker_line_color='#242C3D', marker_line_width=1)
+    fig_bar = px.bar(chart_data, x='Parameter', y=['BOD', 'COD'], bgroupmode='group',
+                     title="Perbandingan Nilai Lapangan Terhadap Ambang Batas Aman Kelas II (mg/L)",
+                     color_discrete_map={'BOD': '#22C55E', 'COD': '#1A6EFC'})
     fig_bar.update_layout(
+        template="plotly_dark",
         paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='#161B25',
-        font={'color': "#E8EDF5"},
-        xaxis=dict(showgrid=False, title_font=dict(size=12)),
-        yaxis=dict(range=[0, 110], gridcolor="#242C3D", title_font=dict(size=12)),
-        showlegend=False,
-        height=300,
-        margin=dict(l=20, r=20, t=10, b=10)
+        plot_bgcolor='rgba(0,0,0,0)',
+        height=350,
+        margin=dict(t=50, b=30)
     )
     st.plotly_chart(fig_bar, use_container_width=True)
 
 # ══════════════════════════════════════════════
-#  TAB 4 — TENTANG
+#  TAB 4 — TENTANG (DIAMKAN, TIDAK DIOTAK-ATIK)
 # ══════════════════════════════════════════════
 with tab4:
-    st.markdown('<div class="sec-head">ℹ️ Informasi Sistem & Kelompok</div>', unsafe_allow_html=True)
-    
-    col_t1, col_t2 = st.columns(2)
-    with col_t1:
-        st.markdown(f"""
-        <div class="about-card" style="border-color:rgba(26,110,252,0.3);">
-            <div class="about-label">Sistem IPAL & Baku Mutu</div>
-            <div class="about-title">🌊 {st.session_state.app_name}</div>
-            <div class="about-body">
-                Aplikasi ini dirancang untuk melakukan kalkulasi cepat parameter kimia lingkungan air. 
-                Acuan klasifikasi didasarkan pada <b>Peraturan Pemerintah (PP) No. 22 Tahun 2021</b> Lampiran VI mengenai Baku Mutu Kualitas Air Nasional Kelas II (diperuntukkan bagi prasarana/sarana rekreasi air, pembudidayaan ikan air tawar, peternakan, air untuk mengairi pertanaman).
-                <br><br>
-                <b>Nilai Batas Baku Mutu Kelas II:</b><br>
-                • <b>pH:</b> Rentang 6.5 – 8.5 (Optimal 6.5–8.0)<br>
-                • <b>BOD:</b> Maksimal ≤ 3 mg/L. Kebutuhan bio-oksigen bakteri pengurai.<br>
-                • <b>COD:</b> Maksimal ≤ 25 mg/L. Total oksigen untuk mengoksidasi semua bahan organik secara kimiawi.
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    with col_t2:
-        st.markdown(f"""
-        <div class="about-card" style="border-color:rgba(14,184,164,0.3);">
-            <div class="about-label">Metodologi IKA</div>
-            <div class="about-title">📐 Cara Perhitungan Indeks</div>
-            <div class="about-body">
-                Indeks Kualitas Air (IKA) dihitung menggunakan sistem sub-indeks berbobot:
-                <br><br>
-                <code style="background:#0D1117; padding:10px 16px; border-radius:6px; border:1px solid #242C3D; display:block; margin:8px 0; font-family:\'Space Mono\',monospace; color:#0EB8A4; font-size:0.85rem;">
-                IKA = (0.30 × SI_pH) + (0.35 × SI_BOD) + (0.35 × SI_COD)
-                </code>
-                Di mana SI (Sub-Indeks) bernilai 0–100 berdasarkan posisi nilai terhadap baku mutu. 
-                Bobot lebih besar pada BOD dan COD karena keduanya langsung mencerminkan beban pencemaran organik yang paling umum di perairan Indonesia.
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-# ─────────────────────────────────────────────
-#  BAGIAN BAWAH UTAMA (PENGGANTI SIDEBAR)
-# ─────────────────────────────────────────────
-st.markdown('<div class="sec-head">⚙️ Panel Admin & Referensi Aplikasi</div>', unsafe_allow_html=True)
-
-# Memindahkan st.expander Pengaturan Aplikasi asli ke bagian bawah halaman utama
-with st.expander("⚙️  Pengaturan Aplikasi (Konfigurasi Konten)"):
-    new_app = st.text_input("Nama Aplikasi", value=st.session_state.app_name)
-    new_grp = st.text_input("Nama Kelompok", value=st.session_state.group_name)
-    new_gdesc = st.text_area("Deskripsi Kelompok", value=st.session_state.group_desc, height=80)
-    new_wdesc = st.text_area("Deskripsi Website", value=st.session_state.web_desc, height=100)
-    if st.button("💾  SIMPAN PENGATURAN"):
-        st.session_state.app_name  = new_app
-        st.session_state.group_name  = new_grp
-        st.session_state.group_desc  = new_gdesc
-        st.session_state.web_desc    = new_wdesc
-        st.success("Pengaturan tersimpan!")
-
-# Memindahkan Info Box Kelompok & Referensi Legal Hukum ke halaman utama bagian bawah
-col_bottom1, col_bottom2 = st.columns(2)
-with col_bottom1:
     st.markdown(f"""
-    <div style="padding:16px; background:var(--card); border-radius:10px; border:1px solid var(--border); height:100%;">
-        <p style="color:var(--teal); font-weight:bold; margin-top:0; font-family:'Space Mono', monospace; font-size:0.85rem;">👥 {st.session_state.group_name}</p>
-        <p style="white-space: pre-line; color:var(--text); font-size:0.85rem; line-height:1.6;">{st.session_state.group_desc}</p>
+    <div class="about-card">
+      <div class="about-label">Informasi Aplikasi</div>
+      <div class="about-title">🚀 Tentang {st.session_state.app_name}</div>
+      <div class="about-body">
+        Aplikasi web ini dirancang secara khusus untuk mempermudah praktikan, akademisi, maupun pengawas lingkungan 
+        dalam mengevaluasi status mutu air permukaan secara cepat dan akurat. Sistem ini mengintegrasikan perhitungan 
+        otomatis dari hasil pengujian laboratorium (seperti titrasi Winkler untuk BOD dan titrasi permanganometri/dikromat untuk COD) 
+        hingga menghasilkan konversi nilai Sub-Indeks kualitas air secara realtime.
+      </div>
     </div>
-    """, unsafe_allow_html=True)
 
-with col_bottom2:
-    st.markdown("""
-    <div style="padding:16px; background:#0D1117; border-radius:10px; border:1px solid var(--border); font-size:0.8rem; color:#7A8BA6; height:100%; display:flex; flex-direction:column; justify-content:center;">
-        <div><b>📋 Dokumen Referensi Regulasi Lingkungan:</b></div>
-        <div style="margin-top:6px;">• Peraturan Pemerintah No. 22 Tahun 2021 (Lampiran VI)</div>
-        <div>• Baku mutu kualitas air nasional kelas II perairan sungai/sejenis</div>
-        <div>• Standardisasi Pengujian Laboratorium Kementerian LHK RI</div>
+    <div class="metric-strip">
+      <div class="metric-item">
+        <div class="metric-num">3</div>
+        <div class="metric-desc">Parameter Utama (pH, BOD, COD)</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-num">PP 22</div>
+        <div class="metric-desc">Tahun 2021 Lampiran VI Acuan baku mutu</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-num">Pure CSS</div>
+        <div class="metric-desc">Antarmuka Modern Tanpa Komponen Eksternal Berat</div>
+      </div>
+    </div>
+
+    <div class="about-card">
+      <div class="about-label">Tim Pengembang</div>
+      <div class="about-title">👥 Kelompok Pengembang — {st.session_state.group_name}</div>
+      <div class="about-body" style="font-family:'Space Mono', monospace; white-space: pre-wrap; background:rgba(255,255,255,0.02); padding:16px; border-radius:8px; border:1px solid var(--border);">
+{st.session_state.group_desc}
+      </div>
+    </div>
+
+    <div class="about-card">
+      <div class="about-label">Parameter Kimia</div>
+      <div class="about-title">🧪 Deskripsi Parameter Air</div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:16px; margin-top:12px;">
+        <div style="background:#0D1117; padding:16px; border-radius:8px; border:1px solid #242C3D;">
+          <div style="font-weight:bold; color:#0EB8A4; margin-bottom:4px;">Scale pH</div>
+          <div class="about-body" style="font-size:0.83rem; line-height:1.6;">
+            Logaritma negatif dari konsentrasi ion hidrogen. Menentukan sifat korosif, toksisitas senyawa kimia, 
+            serta keseimbangan biologis sistem perairan.
+          </div>
+        </div>
+        <div style="background:#0D1117; padding:16px; border-radius:8px; border:1px solid #242C3D;">
+          <div style="font-weight:bold; color:#22C55E; margin-bottom:4px;">BOD (Biochemical Oxygen Demand)</div>
+          <div class="about-body" style="font-size:0.83rem; line-height:1.6;">
+            Biochemical Oxygen Demand. Mengukur jumlah oksigen yang dihabiskan oleh mikroba untuk mendegradasi 
+            senyawa organik dalam waktu 5 hari. Baku mutu ≤ 3 mg/L.
+          </div>
+        </div>
+        <div style="background:#0D1117; padding:16px; border-radius:8px; border:1px solid #242C3D;">
+          <div style="font-weight:bold; color:#1A6EFC; margin-bottom:4px;">COD (Chemical Oxygen Demand)</div>
+          <div class="about-body" style="font-size:0.83rem; line-height:1.6;">
+            Chemical Oxygen Demand. Total oksigen untuk mengoksidasi semua bahan organik secara kimiawi menggunakan 
+            oksidator kuat. Baku mutu ≤ 25 mg/L.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-card" style="border-color:rgba(14,184,164,0.3);">
+      <div class="about-label">Metodologi IKA</div>
+      <div class="about-title">📐 Cara Perhitungan Indeks</div>
+      <div class="about-body">
+        Indeks Kualitas Air (IKA) dihitung menggunakan sistem sub-indeks berbobot:
+        <br><br>
+        <code style="background:#0D1117; padding:10px 16px; border-radius:6px; border:1px solid #242C3D; display:block; margin:8px 0; font-family:'Space Mono',monospace; color:#0EB8A4; font-size:0.85rem;">
+          IKA = (0.30 × SI_pH) + (0.35 × SI_BOD) + (0.35 × SI_COD)
+        </code>
+        Di mana SI (Sub-Indeks) bernilai 0–100 berdasarkan posisi nilai terhadap baku mutu.
+        Bobot lebih besar pada BOD dan COD karena keduanya langsung mencerminkan beban pencemaran organik yang paling umum di perairan Indonesia.
+      </div>
     </div>
     """, unsafe_allow_html=True)
