@@ -1,3 +1,16 @@
+
+# --- Added validation ---
+def validate_non_negative(ph_val=None,bod_val=None,cod_val=None):
+    vals=[("pH",ph_val),("BOD",bod_val),("COD",cod_val)]
+    for name,val in vals:
+        if val is not None:
+            try:
+                if val < 0:
+                    return False,f"Data Tidak Valid: nilai {name} tidak boleh negatif."
+            except TypeError:
+                pass
+    return True,""
+
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -440,26 +453,25 @@ COD_REF = [
 #  HELPER FUNCTIONS
 # ─────────────────────────────────────────────
 def get_ph_status(v):
-    # Baku mutu pH air kelas II sesuai PP No. 22 Tahun 2021: 6–9
     if v < 0:
-        return "Data Tidak Valid", "bad", 0
-    if 6.0 <= v <= 9.0:
-        return "Memenuhi Baku Mutu", "good", 100
-    return "Tidak Memenuhi Baku Mutu", "bad", 10
+        return "Data Tidak Valid","bad",0
+    if 6 <= v <= 9:
+        return "Memenuhi Baku Mutu","good",100
+    return "Tidak Memenuhi Baku Mutu","bad",10
 
 def get_bod_status(v):
     if v < 0:
-        return "Data Tidak Valid", "bad", 0
+        return "Data Tidak Valid","bad",0
     if v < 2:
-        return "Tidak Tercemar", "good", 100
+        return "Tidak Tercemar","good",100
     elif v <= 3:
-        return "Memenuhi Baku Mutu", "good", 85
+        return "Memenuhi Baku Mutu","good",85
     elif v <= 6:
-        return "Tercemar Sedang", "warn", 50
+        return "Tercemar Sedang","warn",50
     elif v <= 12:
-        return "Tercemar Berat", "bad", 25
+        return "Tercemar Berat","bad",25
     else:
-        return "Sangat Tercemar Berat", "bad", 5
+        return "Sangat Tercemar Berat","bad",5
 
 def get_cod_status(v):
     if v < 0:
