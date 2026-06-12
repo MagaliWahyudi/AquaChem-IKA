@@ -43,11 +43,17 @@ html, body, [class*="css"] {
     color: var(--text);
 }
 
-/* Improve readability without overriding component themes */
-body,.stApp{color:var(--text);}
-.stMarkdown p,.stMarkdown li,.stMarkdown span,.stMarkdown div{color:inherit !important;}
-.stNumberInput label,.stTextInput label,.stTextArea label,.stSlider>label{color:#C8D4E5 !important;font-weight:600;}
-[data-testid="stCaptionContainer"],[data-testid="stWidgetLabel"]{color:#C8D4E5 !important;}
+/* Force readable text on all Streamlit elements in any theme */
+.stApp, .stApp * {
+    color: #E8EDF5 !important;
+}
+
+.stApp [data-testid="stMarkdownContainer"] p,
+.stApp [data-testid="stMarkdownContainer"] li,
+.stApp [data-testid="stMarkdownContainer"] span,
+.stApp [data-testid="stMarkdownContainer"] div {
+    color: #E8EDF5 !important;
+}
 
 /* Hide default streamlit branding */
 #MainMenu, footer, header {visibility: hidden;}
@@ -138,7 +144,7 @@ body,.stApp{color:var(--text);}
     letter-spacing: 0.5px;
 }
 .param-fullname {
-    color: #BFC9D8 !important;
+    color: #9AAABE !important;
     font-size: 0.8rem;
     margin-bottom: 16px;
 }
@@ -151,7 +157,7 @@ body,.stApp{color:var(--text);}
 }
 .param-unit {
     font-size: 0.8rem;
-    color: #BFC9D8 !important;
+    color: #9AAABE !important;
     margin-bottom: 14px;
 }
 .status-chip {
@@ -221,7 +227,7 @@ body,.stApp{color:var(--text);}
 }
 .ika-label {
     font-size: 0.85rem;
-    color: #BFC9D8 !important;
+    color: #9AAABE !important;
     margin-top: 6px;
 }
 .ika-cat {
@@ -291,7 +297,7 @@ body,.stApp{color:var(--text);}
     margin-bottom: 10px;
 }
 .about-body {
-    color: #BFC9D8 !important;
+    color: #9AAABE !important;
     font-size: 0.9rem;
     line-height: 1.7;
 }
@@ -319,12 +325,12 @@ body,.stApp{color:var(--text);}
 }
 .metric-desc {
     font-size: 0.78rem;
-    color: #BFC9D8 !important;
+    color: #9AAABE !important;
     margin-top: 2px;
 }
 
 /* Streamlit overrides */
-.stSlider > label { color: #BFC9D8 !important; font-size: 0.85rem !important; }
+.stSlider > label { color: #9AAABE !important; font-size: 0.85rem !important; }
 .stButton > button {
     background: linear-gradient(135deg, var(--teal), var(--blue));
     color: white !important;
@@ -354,7 +360,7 @@ div[data-testid="stExpander"] summary { color: #E8EDF5 !important; }
 }
 .stTabs [data-baseweb="tab"] {
     background: transparent !important;
-    color: #BFC9D8 !important;
+    color: #9AAABE !important;
     border-radius: 7px !important;
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.85rem;
