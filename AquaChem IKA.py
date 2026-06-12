@@ -636,6 +636,9 @@ with st.container():
 #  CALCULATE (LOGIKA EVALUASI UTAMA)
 # ─────────────────────────────────────────────
 ika_score, ph_si, bod_si, cod_si = calc_ika(ph_val, bod_val, cod_val)
+if ika_score is None:
+    st.error("❌ Data Tidak Valid. Nilai pH, BOD, atau COD tidak boleh negatif.")
+    st.stop()
 ika_cat, ika_color = ika_category(ika_score)
 ph_label,  ph_cls,  _ = get_ph_status(ph_val)
 bod_label, bod_cls, _ = get_bod_status(bod_val)
