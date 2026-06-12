@@ -16,57 +16,55 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-#  GLOBAL CSS
+#  GLOBAL CSS (FIXED FOR LIGHT & DARK MODE Clarity)
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-/* Root Variables */
+/* Root Variables - Forced Palette for High Contrast in both modes */
 :root {
     --teal:   #0EB8A4;
     --blue:   #1A6EFC;
     --indigo: #2D3A8C;
-    --dark:   #0D1117;
-    --card:   #161B25;
+    --dark-bg: #0D1117;
+    --card-bg: #161B25;
     --border: #242C3D;
-    --text:   #E8EDF5;
-    --muted:  #7A8BA6;
+    --text-primary: #E8EDF5;
+    --text-muted:  #9AAABE;
     --good:   #22C55E;
     --warn:   #F59E0B;
     --bad:    #EF4444;
 }
 
+/* Force standard font across all elements */
 html, body, [class*="css"] {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: var(--dark);
-    color: var(--text);
 }
 
-/* Force readable text on all Streamlit elements in any theme */
-.stApp, .stApp * {
-    color: #E8EDF5 !important;
-}
-
-.stApp [data-testid="stMarkdownContainer"] p,
-.stApp [data-testid="stMarkdownContainer"] li,
-.stApp [data-testid="stMarkdownContainer"] span,
-.stApp [data-testid="stMarkdownContainer"] div {
-    color: #E8EDF5 !important;
+/* FORCE STREAMLIT NATIVE INTERACTION FIXED 
+   Ensures that Streamlit inputs, text expanders, and labels stay perfectly readable
+*/
+div[data-testid="stMarkdownContainer"] p,
+div[data-testid="stMarkdownContainer"] li,
+div[data-testid="stMarkdownContainer"] span,
+div[data-testid="stMarkdownContainer"] div,
+label, .stSlider, div[data-testid="stExpander"] summary {
+    font-weight: 500;
 }
 
 /* Hide default streamlit branding */
 #MainMenu, footer, header {visibility: hidden;}
 
-/* Hero Banner */
+/* Hero Banner Custom Card With Forced Background */
 .hero {
-    background: linear-gradient(135deg, #0D1117 0%, #0a2a40 50%, #0D1117 100%);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 40px 36px 32px;
-    margin-bottom: 28px;
-    position: relative;
-    overflow: hidden;
+    background: linear-gradient(135deg, #0D1117 0%, #0a2a40 50%, #0D1117 100%) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 16px !important;
+    padding: 40px 36px 32px !important;
+    margin-bottom: 28px !important;
+    position: relative !important;
+    overflow: hidden !important;
 }
 .hero::before {
     content: "";
@@ -85,299 +83,258 @@ html, body, [class*="css"] {
     border-radius: 50%;
 }
 .hero-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 2.4rem;
-    font-weight: 700;
+    font-family: 'Space Mono', monospace !important;
+    font-size: 2.4rem !important;
+    font-weight: 700 !important;
     background: linear-gradient(90deg, #0EB8A4, #1A6EFC);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin: 0 0 8px 0;
-    line-height: 1.2;
+    margin: 0 0 8px 0 !important;
+    line-height: 1.2 !important;
 }
 .hero-sub {
     color: #C8D4E5 !important;
-    font-size: 1rem;
-    margin: 0;
-    font-weight: 400;
+    font-size: 1rem !important;
+    margin: 0 !important;
+    font-weight: 400 !important;
 }
 .hero-info {
-    display: inline-block;
-    background: rgba(14,184,164,0.15);
-    border: 1px solid rgba(14,184,164,0.45);
-    color: #0EB8A4 !important;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-top: 14px;
-    letter-spacing: 0.3px;
+    display: inline-block !important;
+    background: rgba(14,184,164,0.2) !important;
+    border: 1px solid rgba(14,184,164,0.5) !important;
+    color: #14ffd8 !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    margin-top: 14px !important;
+    letter-spacing: 0.3px !important;
 }
 .hero-badge {
-    display: inline-block;
-    background: rgba(14,184,164,0.12);
-    border: 1px solid rgba(14,184,164,0.4);
-    color: #0EB8A4 !important;
-    border-radius: 20px;
-    padding: 3px 14px;
-    font-size: 0.72rem;
-    font-family: 'Space Mono', monospace;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
+    display: inline-block !important;
+    background: rgba(14,184,164,0.2) !important;
+    border: 1px solid rgba(14,184,164,0.5) !important;
+    color: #14ffd8 !important;
+    border-radius: 20px !important;
+    padding: 3px 14px !important;
+    font-size: 0.72rem !important;
+    font-family: 'Space Mono', monospace !important;
+    letter-spacing: 1px !important;
+    margin-bottom: 12px !important;
 }
 
-/* Cards */
+/* Param & IKA Cards with Forced Dark High-Contrast Backgrounds */
 .param-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 24px 22px;
-    height: 100%;
-    transition: border-color 0.2s;
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 14px !important;
+    padding: 24px 22px !important;
+    height: 100% !important;
+    transition: border-color 0.2s !important;
 }
-.param-card:hover { border-color: var(--teal); }
+.param-card:hover { border-color: var(--teal) !important; }
 .param-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 1rem;
+    font-family: 'Space Mono', monospace !important;
+    font-size: 1rem !important;
     color: #0EB8A4 !important;
-    margin-bottom: 6px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+    margin-bottom: 6px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
 }
 .param-fullname {
-    color: #9AAABE !important;
-    font-size: 0.8rem;
-    margin-bottom: 16px;
+    color: var(--text-muted) !important;
+    font-size: 0.8rem !important;
+    margin-bottom: 16px !important;
 }
 .param-value {
-    font-size: 2.4rem;
-    font-weight: 800;
-    color: #E8EDF5 !important;
-    line-height: 1;
-    margin-bottom: 4px;
+    font-size: 2.4rem !important;
+    font-weight: 800 !important;
+    color: var(--text-primary) !important;
+    line-height: 1 !important;
+    margin-bottom: 4px !important;
 }
 .param-unit {
-    font-size: 0.8rem;
-    color: #9AAABE !important;
-    margin-bottom: 14px;
+    font-size: 0.8rem !important;
+    color: var(--text-muted) !important;
+    margin-bottom: 14px !important;
 }
 .status-chip {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+    display: inline-block !important;
+    padding: 4px 12px !important;
+    border-radius: 20px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
 }
-.status-good   { background: rgba(34,197,94,0.15);  color: #22C55E !important; border: 1px solid rgba(34,197,94,0.35); }
-.status-warn   { background: rgba(245,158,11,0.15); color: #F59E0B !important; border: 1px solid rgba(245,158,11,0.35); }
-.status-bad    { background: rgba(239,68,68,0.15);  color: #EF4444 !important; border: 1px solid rgba(239,68,68,0.35); }
+.status-good   { background: rgba(34,197,94,0.2) !important;  color: #22C55E !important; border: 1px solid rgba(34,197,94,0.5) !important; }
+.status-warn   { background: rgba(245,158,11,0.2) !important; color: #F59E0B !important; border: 1px solid rgba(245,158,11,0.5) !important; }
+.status-bad    { background: rgba(239,68,68,0.2) !important;  color: #EF4444 !important; border: 1px solid rgba(239,68,68,0.5) !important; }
 
-/* Reference Table */
+/* Reference Table Forced Background Styles */
 .ref-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 0.85rem !important;
+    background-color: var(--card-bg) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
 }
 .ref-table th {
-    background: rgba(14,184,164,0.1);
+    background: rgba(14,184,164,0.15) !important;
     color: #0EB8A4 !important;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-    padding: 10px 14px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
+    font-family: 'Space Mono', monospace !important;
+    font-size: 0.75rem !important;
+    padding: 10px 14px !important;
+    text-align: left !important;
+    border-bottom: 1px solid var(--border) !important;
 }
 .ref-table td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    color: #E8EDF5 !important;
+    padding: 10px 14px !important;
+    border-bottom: 1px solid var(--border) !important;
+    color: var(--text-primary) !important;
 }
-.ref-table tr:last-child td { border-bottom: none; }
-.ref-table tr:hover td { background: rgba(255,255,255,0.02); }
+.ref-table tr:last-child td { border-bottom: none !important; }
+.ref-table tr:hover td { background: rgba(255,255,255,0.04) !important; }
 
-/* Section Header */
+/* Section Header Styles */
 .sec-head {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-    letter-spacing: 2px;
+    font-family: 'Space Mono', monospace !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 2px !important;
     color: #0EB8A4 !important;
-    text-transform: uppercase;
-    margin: 32px 0 16px 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    text-transform: uppercase !important;
+    margin: 32px 0 16px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
 }
 .sec-head::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: var(--border);
+    content: "" !important;
+    flex: 1 !important;
+    height: 1px !important;
+    background: var(--border) !important;
 }
 
-/* IKA Score */
+/* IKA Score Ring Custom Styles */
 .ika-ring {
-    text-align: center;
-    padding: 16px 0;
+    text-align: center !important;
+    padding: 16px 0 !important;
 }
 .ika-score {
-    font-family: 'Space Mono', monospace;
-    font-size: 3.8rem;
-    font-weight: 700;
-    line-height: 1;
+    font-family: 'Space Mono', monospace !important;
+    font-size: 3.8rem !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
 }
 .ika-label {
-    font-size: 0.85rem;
-    color: #9AAABE !important;
-    margin-top: 6px;
+    font-size: 0.85rem !important;
+    color: var(--text-muted) !important;
+    margin-top: 6px !important;
 }
 .ika-cat {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-top: 8px;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    margin-top: 8px !important;
 }
 
-/* Info box */
+/* Callout Info Boxes with Forced Deep Dark Backgrounds */
 .info-box {
-    background: rgba(14,184,164,0.06);
-    border: 1px solid rgba(14,184,164,0.25);
-    border-left: 4px solid var(--teal);
-    border-radius: 8px;
-    padding: 14px 18px;
-    font-size: 0.88rem;
+    background: rgba(14,184,164,0.08) !important;
+    background-color: #102226 !important;
+    border: 1px solid rgba(14,184,164,0.3) !important;
+    border-left: 5px solid var(--teal) !important;
+    border-radius: 8px !important;
+    padding: 14px 18px !important;
+    font-size: 0.88rem !important;
     color: #E8EDF5 !important;
-    margin: 10px 0;
-    line-height: 1.6;
+    margin: 10px 0 !important;
+    line-height: 1.6 !important;
 }
 .warn-box {
-    background: rgba(245,158,11,0.06);
-    border: 1px solid rgba(245,158,11,0.25);
-    border-left: 4px solid #F59E0B;
-    border-radius: 8px;
-    padding: 14px 18px;
-    font-size: 0.88rem;
+    background: rgba(245,158,11,0.08) !important;
+    background-color: #261f10 !important;
+    border: 1px solid rgba(245,158,11,0.3) !important;
+    border-left: 5px solid #F59E0B !important;
+    border-radius: 8px !important;
+    padding: 14px 18px !important;
+    font-size: 0.88rem !important;
     color: #E8EDF5 !important;
-    margin: 10px 0;
-    line-height: 1.6;
+    margin: 10px 0 !important;
+    line-height: 1.6 !important;
 }
 .bad-box {
-    background: rgba(239,68,68,0.06);
-    border: 1px solid rgba(239,68,68,0.25);
-    border-left: 4px solid #EF4444;
-    border-radius: 8px;
-    padding: 14px 18px;
-    font-size: 0.88rem;
+    background: rgba(239,68,68,0.08) !important;
+    background-color: #261215 !important;
+    border: 1px solid rgba(239,68,68,0.3) !important;
+    border-left: 5px solid #EF4444 !important;
+    border-radius: 8px !important;
+    padding: 14px 18px !important;
+    font-size: 0.88rem !important;
     color: #E8EDF5 !important;
-    margin: 10px 0;
-    line-height: 1.6;
+    margin: 10px 0 !important;
+    line-height: 1.6 !important;
 }
 
-/* Divider */
-.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
-
-/* About section */
+/* About custom section card */
 .about-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 28px 26px;
-    margin-bottom: 18px;
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 14px !important;
+    padding: 28px 26px !important;
+    margin-bottom: 18px !important;
 }
 .about-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 2px;
+    font-family: 'Space Mono', monospace !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 2px !important;
     color: #0EB8A4 !important;
-    text-transform: uppercase;
-    margin-bottom: 8px;
+    text-transform: uppercase !important;
+    margin-bottom: 8px !important;
 }
 .about-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #E8EDF5 !important;
-    margin-bottom: 10px;
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 10px !important;
 }
 .about-body {
-    color: #9AAABE !important;
-    font-size: 0.9rem;
-    line-height: 1.7;
+    color: var(--text-muted) !important;
+    font-size: 0.9rem !important;
+    line-height: 1.7 !important;
 }
 
-/* Metric strip */
-.metric-strip {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-}
-.metric-item {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 20px;
-    flex: 1;
-    min-width: 120px;
-}
-.metric-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #0EB8A4 !important;
-}
-.metric-desc {
-    font-size: 0.78rem;
-    color: #9AAABE !important;
-    margin-top: 2px;
-}
-
-/* Streamlit overrides */
-.stSlider > label { color: #9AAABE !important; font-size: 0.85rem !important; }
+/* Buttons and Interactive Streamlit Overrides */
 .stButton > button {
-    background: linear-gradient(135deg, var(--teal), var(--blue));
+    background: linear-gradient(135deg, var(--teal), var(--blue)) !important;
     color: white !important;
-    border: none;
-    border-radius: 8px;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-    padding: 10px 24px;
-    transition: opacity 0.2s;
-    width: 100%;
+    border: none !important;
+    border-radius: 8px !important;
+    font-family: 'Space Mono', monospace !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 1px !important;
+    padding: 10px 24px !important;
+    transition: opacity 0.2s !important;
+    width: 100% !important;
 }
-.stButton > button:hover { opacity: 0.85; }
-div[data-testid="stExpander"] {
-    background: var(--card);
+.stButton > button:hover { opacity: 0.85 !important; }
+
+/* Custom Streamlit Tabs Layout Clarity Fix */
+.stTabs [data-baseweb="tab-list"] {
+    background-color: var(--card-bg) !important;
     border: 1px solid var(--border) !important;
     border-radius: 10px !important;
-}
-div[data-testid="stExpander"] summary { color: #E8EDF5 !important; }
-
-/* Tabs */
-.stTabs [data-baseweb="tab-list"] {
-    background: var(--card);
-    border-radius: 10px;
-    padding: 4px;
-    gap: 4px;
+    padding: 4px !important;
 }
 .stTabs [data-baseweb="tab"] {
     background: transparent !important;
-    color: #9AAABE !important;
-    border-radius: 7px !important;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
+    color: var(--text-muted) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
 }
 .stTabs [aria-selected="true"] {
     background: linear-gradient(135deg, rgba(14,184,164,0.25), rgba(26,110,252,0.25)) !important;
-    color: #E8EDF5 !important;
-}
-
-/* Number input, text labels */
-.stNumberInput label, .stTextInput label, .stTextArea label {
-    color: #C8D4E5 !important;
-}
-input, textarea {
-    color: #E8EDF5 !important;
-    background-color: #1E2533 !important;
+    color: #ffffff !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -446,7 +403,6 @@ COD_REF = [
 #  HELPER FUNCTIONS
 # ─────────────────────────────────────────────
 def get_ph_status(v):
-    # Baku mutu pH air kelas II sesuai PP No. 22 Tahun 2021: 6–9
     if 6.0 <= v <= 9.0:
         return "Memenuhi Baku Mutu", "good", 100
     else:
@@ -477,10 +433,6 @@ def get_cod_status(v):
         return "Sangat Tercemar Berat", "bad", 5
 
 def calc_ika(ph_val, bod_val, cod_val):
-    """
-    Indeks Kualitas Air sederhana berdasarkan sub-indeks tiap parameter.
-    Bobot: pH=30%, BOD=35%, COD=35%
-    """
     _, _, ph_score  = get_ph_status(ph_val)
     _, _, bod_score = get_bod_status(bod_val)
     _, _, cod_score = get_cod_status(cod_val)
@@ -533,7 +485,6 @@ st.markdown(f"""
 # ─────────────────────────────────────────────
 st.markdown('<div class="sec-head">🎛️ Panel Kontrol Mode Input Data</div>', unsafe_allow_html=True)
 
-# Membuat tata letak baris tombol interaktif halaman utama
 btn_col1, btn_col2 = st.columns(2)
 with btn_col1:
     if st.button("📊 MODE 1: Input Nilai Langsung (PH/BOD/COD Sudah Diketahui)"):
@@ -542,23 +493,19 @@ with btn_col2:
     if st.button("🧪 MODE 2: Hitung dari Titrasi (Laboratorium)"):
         st.session_state.main_input_mode = "🧪 Dari Titrasi"
 
-# Menampilkan indikator status mode yang sedang aktif saat ini
 st.markdown(f"""
-<div style="font-size:0.9rem; margin-bottom:20px; color:#9AAABE;">
+<div style="font-size:0.9rem; margin-bottom:20px; color:#9AAABE; padding: 4px 8px; background-color: #161B25; border-radius:6px; display:inline-block; border: 1px solid #242C3D;">
     Mode aktif saat ini: <span style="color:#0EB8A4; font-weight:bold; font-family:'Space Mono', monospace;">{st.session_state.main_input_mode}</span>
 </div>
 """, unsafe_allow_html=True)
 
-# Inisialisasi variabel default sebelum kondisional penentuan nilai input
 ph_val = 7.0
 bod_val = 2.0
 cod_val = 15.0
 
-# Wadah penampung form input data lapangan utama
 with st.container():
-    st.markdown('<div style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:25px;">', unsafe_allow_html=True)
+    st.markdown('<div style="background:#161B25; border:1px solid #242C3D; border-radius:14px; padding:24px; margin-bottom:25px;">', unsafe_allow_html=True)
     
-    # Input umum pH (Selalu muncul di kedua mode)
     ph_val = st.number_input("Masukkan Nilai pH", min_value=0.0, max_value=14.0, value=7.0, step=0.1,
                              help="Skala 0–14. Baku mutu sesuai PP No. 22 Tahun 2021 Kelas II: 6–9", key="main_ph_input")
     
@@ -573,7 +520,6 @@ with st.container():
                                       help="Chemical Oxygen Demand. Baku mutu: < 25 mg/L", key="main_cod_direct")
             
     elif st.session_state.main_input_mode == "🧪 Dari Titrasi":
-        # ── BOD dari Titrasi Winkler ──
         st.markdown("""<div style="font-size:0.9rem; color:#0EB8A4; font-family:'Space Mono',monospace;
                        margin:15px 0 6px 0; font-weight:bold;">🔬 Perhitungan Parameter BOD — Titrasi Winkler</div>""", unsafe_allow_html=True)
         st.markdown("""<div style="font-size:0.75rem; color:#9AAABE; margin-bottom:8px;">
@@ -591,12 +537,11 @@ with st.container():
         else:
             bod_val = 0.0
             
-        st.markdown(f"""<div style="background:rgba(14,184,164,0.08); border:1px solid rgba(14,184,164,0.3);
+        st.markdown(f"""<div style="background-color:#102226; border:1px solid rgba(14,184,164,0.3);
                         border-radius:8px; padding:10px 14px; font-size:0.85rem; margin:6px 0 20px 0; color:#E8EDF5;">
                         Hasil Perhitungan Terhitung BOD: <b style="color:#0EB8A4; font-family:'Space Mono',monospace;">
                         {bod_val} mg/L</b></div>""", unsafe_allow_html=True)
         
-        # ── COD dari Titrasi Permanganometri / Dikromat ──
         st.markdown("""<div style="font-size:0.9rem; color:#8B5CF6; font-family:'Space Mono',monospace;
                        margin:15px 0 6px 0; font-weight:bold;">🔬 Perhitungan Parameter COD — Titrasi Dikromat / Permanganometri</div>""", unsafe_allow_html=True)
         st.markdown("""<div style="font-size:0.75rem; color:#9AAABE; margin-bottom:8px;">
@@ -614,7 +559,7 @@ with st.container():
         else:
             cod_val = 0.0
             
-        st.markdown(f"""<div style="background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.3);
+        st.markdown(f"""<div style="background-color:#1c142e; border:1px solid rgba(139,92,246,0.3);
                         border-radius:8px; padding:10px 14px; font-size:0.85rem; margin:6px 0 4px 0; color:#E8EDF5;">
                         Hasil Perhitungan Terhitung COD: <b style="color:#8B5CF6; font-family:'Space Mono',monospace;">
                         {cod_val} mg/L</b></div>""", unsafe_allow_html=True)
@@ -643,7 +588,6 @@ tab1, tab2, tab3, tab4 = st.tabs([
 #  TAB 1 — ANALISIS
 # ══════════════════════════════════════════════
 with tab1:
-    # IKA Score strip
     st.markdown('<div class="sec-head">Indeks Kualitas Air (IKA)</div>', unsafe_allow_html=True)
     c1, c2, c3, c4 = st.columns([1.2, 1, 1, 1])
     with c1:
@@ -683,10 +627,8 @@ with tab1:
           {status_chip(cod_label, cod_cls)}
         </div>""", unsafe_allow_html=True)
 
-    # ── Parameter Detail ──
     st.markdown('<div class="sec-head">Detail Parameter</div>', unsafe_allow_html=True)
     
-    # pH
     with st.expander("🔵  pH — Derajat Keasaman Air", expanded=True):
         col_a, col_b = st.columns([1, 1.4])
         with col_a:
@@ -708,7 +650,6 @@ with tab1:
             else:
                 st.markdown(f'<div class="bad-box">🚨 <strong>pH {ph_val}</strong> — Nilai ini tidak memenuhi baku mutu air kelas II (6–9) sesuai PP No. 22 Tahun 2021. Air terindikasi sangat asam atau sangat basa, berbahaya bagi biota air dan tidak layak untuk penggunaan langsung.</div>', unsafe_allow_html=True)
 
-    # BOD
     with st.expander("🟢  BOD — Biochemical Oxygen Demand", expanded=True):
         col_a, col_b = st.columns([1, 1.4])
         with col_a:
@@ -732,7 +673,6 @@ with tab1:
             else:
                 st.markdown(f'<div class="bad-box">🚨 <strong>BOD {bod_val} mg/L</strong> — Jauh melampaui baku mutu! Pencemaran organik berat. Air tidak layak pakai tanpa pengolahan intensif.</div>', unsafe_allow_html=True)
 
-    # COD
     with st.expander("🔴  COD — Chemical Oxygen Demand", expanded=True):
         col_a, col_b = st.columns([1, 1.4])
         with col_a:
@@ -755,7 +695,6 @@ with tab1:
             else:
                 st.markdown(f'<div class="bad-box">🚨 <strong>COD {cod_val} mg/L</strong> — Sangat tinggi! Indikasi pencemaran kimia berat. Air memerlukan pengolahan khusus sebelum digunakan.</div>', unsafe_allow_html=True)
 
-    # Rasio BOD/COD
     st.markdown('<div class="sec-head">Analisis Lanjutan</div>', unsafe_allow_html=True)
     if cod_val > 0:
         ratio = round(bod_val / cod_val, 3)
@@ -861,7 +800,6 @@ with tab3:
     st.markdown('<div class="sec-head">Visualisasi Posisi Parameter</div>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     
-    # ── Gauge IKA ──
     with col1:
         fig_gauge = go.Figure(go.Indicator(
             mode="gauge+number",
@@ -891,7 +829,6 @@ with tab3:
         )
         st.plotly_chart(fig_gauge, use_container_width=True)
         
-    # ── Radar Sub-Indeks ──
     with col2:
         categories = ["pH", "BOD", "COD"]
         values = [ph_si, bod_si, cod_si]
@@ -931,7 +868,6 @@ with tab3:
         )
         st.plotly_chart(fig_radar, use_container_width=True)
         
-    # ── Bar chart posisi vs batas ──
     st.markdown('<div class="sec-head">Posisi Nilai vs Batas Baku Mutu</div>', unsafe_allow_html=True)
     fig_bar = make_subplots(rows=1, cols=3, subplot_titles=["pH", "BOD (mg/L)", "COD (mg/L)"])
     fig_bar.add_trace(go.Bar(x=["Nilai Kamu"], y=[ph_val],
@@ -990,28 +926,22 @@ with tab4:
       <div class="about-label">Parameter yang Dianalisis</div>
       <div class="about-title">🧪 Parameter Kimia Kualitas Air</div>
       <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:12px;">
-        <div style="flex:1; min-width:180px; background:#0D1117; border-radius:10px; padding:16px;
-                    border:1px solid #242C3D;">
-          <div style="font-family:'Space Mono',monospace; color:#0EB8A4; font-size:1.1rem;
-                      font-weight:700; margin-bottom:6px;">pH</div>
+        <div style="flex:1; min-width:180px; background-color:#0D1117; border-radius:10px; padding:16px; border:1px solid #242C3D;">
+          <div style="font-family:'Space Mono',monospace; color:#0EB8A4; font-size:1.1rem; font-weight:700; margin-bottom:6px;">pH</div>
           <div style="color:#9AAABE; font-size:0.83rem; line-height:1.6;">
             Derajat keasaman air. Mengukur konsentrasi ion H⁺.
             Baku mutu kelas II sesuai PP No. 22 Tahun 2021: 6–9.
           </div>
         </div>
-        <div style="flex:1; min-width:180px; background:#0D1117; border-radius:10px; padding:16px;
-                    border:1px solid #242C3D;">
-          <div style="font-family:'Space Mono',monospace; color:#1A6EFC; font-size:1.1rem;
-                      font-weight:700; margin-bottom:6px;">BOD</div>
+        <div style="flex:1; min-width:180px; background-color:#0D1117; border-radius:10px; padding:16px; border:1px solid #242C3D;">
+          <div style="font-family:'Space Mono',monospace; color:#1A6EFC; font-size:1.1rem; font-weight:700; margin-bottom:6px;">BOD</div>
           <div style="color:#9AAABE; font-size:0.83rem; line-height:1.6;">
             Biochemical Oxygen Demand. Kebutuhan oksigen untuk degradasi
             bahan organik secara biologis. Baku mutu ≤ 3 mg/L.
           </div>
         </div>
-        <div style="flex:1; min-width:180px; background:#0D1117; border-radius:10px; padding:16px;
-                    border:1px solid #242C3D;">
-          <div style="font-family:'Space Mono',monospace; color:#8B5CF6; font-size:1.1rem;
-                      font-weight:700; margin-bottom:6px;">COD</div>
+        <div style="flex:1; min-width:180px; background-color:#0D1117; border-radius:10px; padding:16px; border:1px solid #242C3D;">
+          <div style="font-family:'Space Mono',monospace; color:#8B5CF6; font-size:1.1rem; font-weight:700; margin-bottom:6px;">COD</div>
           <div style="color:#9AAABE; font-size:0.83rem; line-height:1.6;">
             Chemical Oxygen Demand. Total oksigen untuk mengoksidasi
             semua bahan organik secara kimiawi. Baku mutu ≤ 25 mg/L.
