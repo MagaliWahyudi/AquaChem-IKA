@@ -43,16 +43,28 @@ html, body, [class*="css"] {
     color: var(--text);
 }
 
-/* Force readable text on all Streamlit elements in any theme */
-.stApp, .stApp * {
-    color: #E8EDF5 !important;
-}
 
+/* Theme-aware readable text */
+html{color-scheme:light dark;}
+
+@media (prefers-color-scheme: dark){
+.stApp,.stApp *{color:#E8EDF5 !important;}
 .stApp [data-testid="stMarkdownContainer"] p,
 .stApp [data-testid="stMarkdownContainer"] li,
 .stApp [data-testid="stMarkdownContainer"] span,
-.stApp [data-testid="stMarkdownContainer"] div {
-    color: #E8EDF5 !important;
+.stApp [data-testid="stMarkdownContainer"] div{
+color:#E8EDF5 !important;}
+}
+
+@media (prefers-color-scheme: light){
+.stApp,.stApp *{color:#111827 !important;}
+.stApp [data-testid="stMarkdownContainer"] p,
+.stApp [data-testid="stMarkdownContainer"] li,
+.stApp [data-testid="stMarkdownContainer"] span,
+.stApp [data-testid="stMarkdownContainer"] div{
+color:#111827 !important;}
+.stNumberInput label,.stTextInput label,.stTextArea label,.stSlider>label{
+color:#111827 !important;font-weight:600;}
 }
 
 /* Hide default streamlit branding */
@@ -95,7 +107,7 @@ html, body, [class*="css"] {
     line-height: 1.2;
 }
 .hero-sub {
-    color: #C8D4E5 !important;
+    color: inherit !important;
     font-size: 1rem;
     margin: 0;
     font-weight: 400;
@@ -144,7 +156,7 @@ html, body, [class*="css"] {
     letter-spacing: 0.5px;
 }
 .param-fullname {
-    color: #9AAABE !important;
+    color: inherit !important;
     font-size: 0.8rem;
     margin-bottom: 16px;
 }
@@ -157,7 +169,7 @@ html, body, [class*="css"] {
 }
 .param-unit {
     font-size: 0.8rem;
-    color: #9AAABE !important;
+    color: inherit !important;
     margin-bottom: 14px;
 }
 .status-chip {
@@ -227,7 +239,7 @@ html, body, [class*="css"] {
 }
 .ika-label {
     font-size: 0.85rem;
-    color: #9AAABE !important;
+    color: inherit !important;
     margin-top: 6px;
 }
 .ika-cat {
@@ -297,7 +309,7 @@ html, body, [class*="css"] {
     margin-bottom: 10px;
 }
 .about-body {
-    color: #9AAABE !important;
+    color: inherit !important;
     font-size: 0.9rem;
     line-height: 1.7;
 }
@@ -325,12 +337,12 @@ html, body, [class*="css"] {
 }
 .metric-desc {
     font-size: 0.78rem;
-    color: #9AAABE !important;
+    color: inherit !important;
     margin-top: 2px;
 }
 
 /* Streamlit overrides */
-.stSlider > label { color: #9AAABE !important; font-size: 0.85rem !important; }
+.stSlider > label { color: inherit !important; font-size: 0.85rem !important; }
 .stButton > button {
     background: linear-gradient(135deg, var(--teal), var(--blue));
     color: white !important;
@@ -360,7 +372,7 @@ div[data-testid="stExpander"] summary { color: #E8EDF5 !important; }
 }
 .stTabs [data-baseweb="tab"] {
     background: transparent !important;
-    color: #9AAABE !important;
+    color: inherit !important;
     border-radius: 7px !important;
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.85rem;
@@ -373,7 +385,7 @@ div[data-testid="stExpander"] summary { color: #E8EDF5 !important; }
 
 /* Number input, text labels */
 .stNumberInput label, .stTextInput label, .stTextArea label {
-    color: #C8D4E5 !important;
+    color: inherit !important;
 }
 input, textarea {
     color: #E8EDF5 !important;
