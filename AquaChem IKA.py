@@ -16,7 +16,7 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-#  GLOBAL CSS (KOREKSI KONTRAS TEKS TERANG & GELAP)
+#  GLOBAL CSS
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
@@ -37,30 +37,21 @@ st.markdown("""
     --bad:    #EF4444;
 }
 
-/* Base App Styling */
-.stApp {
+html, body, [class*="css"] {
     font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: var(--dark);
     color: var(--text);
 }
 
-/* Menargetkan teks bawaan markdown Streamlit agar tetap terang */
-.stApp [data-testid="stMarkdownContainer"] p,
-.stApp [data-testid="stMarkdownContainer"] li,
-.stApp [data-testid="stMarkdownContainer"] span {
-    color: #E8EDF5;
+/* Force readable text on all Streamlit elements in any theme */
+.stApp, .stApp * {
+    color: #E8EDF5 !important;
 }
 
-/* Menjaga teks di dalam expander tetap kontras dan terbaca */
-div[data-testid="stExpander"] {
-    background: var(--card) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: 10px !important;
-}
-div[data-testid="stExpander"] p {
-    color: #C8D4E5 !important;
-}
-div[data-testid="stExpander"] summary span {
+.stApp [data-testid="stMarkdownContainer"] p,
+.stApp [data-testid="stMarkdownContainer"] li,
+.stApp [data-testid="stMarkdownContainer"] span,
+.stApp [data-testid="stMarkdownContainer"] div {
     color: #E8EDF5 !important;
 }
 
@@ -245,31 +236,39 @@ div[data-testid="stExpander"] summary span {
     margin-top: 8px;
 }
 
-/* Info, Warn, Bad boxes */
-.info-box, .warn-box, .bad-box {
-    border-radius: 8px;
-    padding: 14px 18px;
-    font-size: 0.88rem;
-    margin: 10px 0;
-    line-height: 1.6;
-}
+/* Info box */
 .info-box {
     background: rgba(14,184,164,0.06);
     border: 1px solid rgba(14,184,164,0.25);
     border-left: 4px solid var(--teal);
-    color: #0EB8A4 !important;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.88rem;
+    color: #E8EDF5 !important;
+    margin: 10px 0;
+    line-height: 1.6;
 }
 .warn-box {
     background: rgba(245,158,11,0.06);
     border: 1px solid rgba(245,158,11,0.25);
     border-left: 4px solid #F59E0B;
-    color: #F59E0B !important;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.88rem;
+    color: #E8EDF5 !important;
+    margin: 10px 0;
+    line-height: 1.6;
 }
 .bad-box {
     background: rgba(239,68,68,0.06);
     border: 1px solid rgba(239,68,68,0.25);
     border-left: 4px solid #EF4444;
-    color: #EF4444 !important;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.88rem;
+    color: #E8EDF5 !important;
+    margin: 10px 0;
+    line-height: 1.6;
 }
 
 /* Divider */
@@ -303,6 +302,55 @@ div[data-testid="stExpander"] summary span {
     line-height: 1.7;
 }
 
+/* Metric strip */
+.metric-strip {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.metric-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+    flex: 1;
+    min-width: 120px;
+}
+.metric-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0EB8A4 !important;
+}
+.metric-desc {
+    font-size: 0.78rem;
+    color: #9AAABE !important;
+    margin-top: 2px;
+}
+
+/* Streamlit overrides */
+.stSlider > label { color: #9AAABE !important; font-size: 0.85rem !important; }
+.stButton > button {
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    color: white !important;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    padding: 10px 24px;
+    transition: opacity 0.2s;
+    width: 100%;
+}
+.stButton > button:hover { opacity: 0.85; }
+div[data-testid="stExpander"] {
+    background: var(--card);
+    border: 1px solid var(--border) !important;
+    border-radius: 10px !important;
+}
+div[data-testid="stExpander"] summary { color: #E8EDF5 !important; }
+
 /* Tabs */
 .stTabs [data-baseweb="tab-list"] {
     background: var(--card);
@@ -323,13 +371,13 @@ div[data-testid="stExpander"] summary span {
     color: #E8EDF5 !important;
 }
 
-/* Input Overrides */
-.stNumberInput label {
+/* Number input, text labels */
+.stNumberInput label, .stTextInput label, .stTextArea label {
     color: #C8D4E5 !important;
 }
-input {
+input, textarea {
     color: #E8EDF5 !important;
-    background-color: #161B25 !important;
+    background-color: #1E2533 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -339,10 +387,8 @@ input {
 # ─────────────────────────────────────────────
 if "app_name" not in st.session_state:
     st.session_state.app_name = "AquaChem IKA"
-
 if "group_name" not in st.session_state:
     st.session_state.group_name = "Anggota Kelompok 4"
-
 if "group_desc" not in st.session_state:
     st.session_state.group_desc = (
         "Aqiila Rahmania Mumtaza (2560577)\n"
@@ -351,7 +397,6 @@ if "group_desc" not in st.session_state:
         "Naufa Afifah (2560715)\n"
         "Siti Halimah Tusysyadiyah Tsany (2560785)"
     )
-
 if "web_desc" not in st.session_state:
     st.session_state.web_desc = (
         "Aplikasi ini dikembangkan untuk membantu analisis kualitas air "
@@ -359,6 +404,7 @@ if "web_desc" not in st.session_state:
         "Gunakan panel input data di bawah banner halaman utama untuk memasukkan data pengukuran."
     )
 
+# Tambahan session state pelacak mode input aktif halaman utama
 if "main_input_mode" not in st.session_state:
     st.session_state.main_input_mode = "📊 Langsung (Nilai)"
 
@@ -371,7 +417,6 @@ PH_REF = [
     {"Kategori": "Normal / Memenuhi Baku Mutu Kelas II", "Rentang": "6 – 9",
      "Status": "✅ Memenuhi Baku Mutu", "Kelas": "good"},
 ]
-
 BOD_REF = [
     {"Kategori": "Sangat Baik (Air Bersih)", "Rentang": "< 2 mg/L",
      "Status": "✅ Tidak Tercemar", "Kelas": "good"},
@@ -384,7 +429,6 @@ BOD_REF = [
     {"Kategori": "Sangat Tercemar Berat", "Rentang": "> 12 mg/L",
      "Status": "💀 Sangat Tercemar", "Kelas": "bad"},
 ]
-
 COD_REF = [
     {"Kategori": "Sangat Baik", "Rentang": "< 10 mg/L",
      "Status": "✅ Tidak Tercemar", "Kelas": "good"},
@@ -402,6 +446,7 @@ COD_REF = [
 #  HELPER FUNCTIONS
 # ─────────────────────────────────────────────
 def get_ph_status(v):
+    # Baku mutu pH air kelas II sesuai PP No. 22 Tahun 2021: 6–9
     if 6.0 <= v <= 9.0:
         return "Memenuhi Baku Mutu", "good", 100
     else:
@@ -432,6 +477,10 @@ def get_cod_status(v):
         return "Sangat Tercemar Berat", "bad", 5
 
 def calc_ika(ph_val, bod_val, cod_val):
+    """
+    Indeks Kualitas Air sederhana berdasarkan sub-indeks tiap parameter.
+    Bobot: pH=30%, BOD=35%, COD=35%
+    """
     _, _, ph_score  = get_ph_status(ph_val)
     _, _, bod_score = get_bod_status(bod_val)
     _, _, cod_score = get_cod_status(cod_val)
@@ -480,10 +529,11 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-#  PANEL INPUT DATA
+#  FITUR TOMBOL & PANEL INPUT DI HALAMAN UTAMA
 # ─────────────────────────────────────────────
 st.markdown('<div class="sec-head">🎛️ Panel Kontrol Mode Input Data</div>', unsafe_allow_html=True)
 
+# Membuat tata letak baris tombol interaktif halaman utama
 btn_col1, btn_col2 = st.columns(2)
 with btn_col1:
     if st.button("📊 MODE 1: Input Nilai Langsung (PH/BOD/COD Sudah Diketahui)"):
@@ -492,19 +542,23 @@ with btn_col2:
     if st.button("🧪 MODE 2: Hitung dari Titrasi (Laboratorium)"):
         st.session_state.main_input_mode = "🧪 Dari Titrasi"
 
+# Menampilkan indikator status mode yang sedang aktif saat ini
 st.markdown(f"""
 <div style="font-size:0.9rem; margin-bottom:20px; color:#9AAABE;">
     Mode aktif saat ini: <span style="color:#0EB8A4; font-weight:bold; font-family:'Space Mono', monospace;">{st.session_state.main_input_mode}</span>
 </div>
 """, unsafe_allow_html=True)
 
+# Inisialisasi variabel default sebelum kondisional penentuan nilai input
 ph_val = 7.0
 bod_val = 2.0
 cod_val = 15.0
 
+# Wadah penampung form input data lapangan utama
 with st.container():
     st.markdown('<div style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:25px;">', unsafe_allow_html=True)
     
+    # Input umum pH (Selalu muncul di kedua mode)
     ph_val = st.number_input("Masukkan Nilai pH", min_value=0.0, max_value=14.0, value=7.0, step=0.1,
                              help="Skala 0–14. Baku mutu sesuai PP No. 22 Tahun 2021 Kelas II: 6–9", key="main_ph_input")
     
@@ -519,6 +573,7 @@ with st.container():
                                       help="Chemical Oxygen Demand. Baku mutu: < 25 mg/L", key="main_cod_direct")
             
     elif st.session_state.main_input_mode == "🧪 Dari Titrasi":
+        # ── BOD dari Titrasi Winkler ──
         st.markdown("""<div style="font-size:0.9rem; color:#0EB8A4; font-family:'Space Mono',monospace;
                        margin:15px 0 6px 0; font-weight:bold;">🔬 Perhitungan Parameter BOD — Titrasi Winkler</div>""", unsafe_allow_html=True)
         st.markdown("""<div style="font-size:0.75rem; color:#9AAABE; margin-bottom:8px;">
@@ -540,9 +595,10 @@ with st.container():
                         border-radius:8px; padding:10px 14px; font-size:0.85rem; margin:6px 0 20px 0; color:#E8EDF5;">
                         Hasil Perhitungan Terhitung BOD: <b style="color:#0EB8A4; font-family:'Space Mono',monospace;">
                         {bod_val} mg/L</b></div>""", unsafe_allow_html=True)
-
+        
+        # ── COD dari Titrasi Permanganometri / Dikromat ──
         st.markdown("""<div style="font-size:0.9rem; color:#8B5CF6; font-family:'Space Mono',monospace;
-                       margin:15px 0 6px 0; font-weight:bold;">🔬 Perhitungan Parameter COD — Titrasi Dikromat</div>""", unsafe_allow_html=True)
+                       margin:15px 0 6px 0; font-weight:bold;">🔬 Perhitungan Parameter COD — Titrasi Dikromat / Permanganometri</div>""", unsafe_allow_html=True)
         st.markdown("""<div style="font-size:0.75rem; color:#9AAABE; margin-bottom:8px;">
             Rumus: COD = (V_blanko − V_sampel) × N_titran × 8000 / V_sampel
             </div>""", unsafe_allow_html=True)
@@ -565,7 +621,7 @@ with st.container():
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-#  CALCULATE OUTPUTS
+#  CALCULATE (LOGIKA EVALUASI UTAMA)
 # ─────────────────────────────────────────────
 ika_score, ph_si, bod_si, cod_si = calc_ika(ph_val, bod_val, cod_val)
 ika_cat, ika_color = ika_category(ika_score)
@@ -574,7 +630,7 @@ bod_label, bod_cls, _ = get_bod_status(bod_val)
 cod_label, cod_cls, _ = get_cod_status(cod_val)
 
 # ─────────────────────────────────────────────
-#  TABS NAVIGATION
+#  TABS
 # ─────────────────────────────────────────────
 tab1, tab2, tab3, tab4 = st.tabs([
     "📊  Analisis Parameter",
@@ -587,6 +643,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 #  TAB 1 — ANALISIS
 # ══════════════════════════════════════════════
 with tab1:
+    # IKA Score strip
     st.markdown('<div class="sec-head">Indeks Kualitas Air (IKA)</div>', unsafe_allow_html=True)
     c1, c2, c3, c4 = st.columns([1.2, 1, 1, 1])
     with c1:
@@ -626,51 +683,79 @@ with tab1:
           {status_chip(cod_label, cod_cls)}
         </div>""", unsafe_allow_html=True)
 
+    # ── Parameter Detail ──
     st.markdown('<div class="sec-head">Detail Parameter</div>', unsafe_allow_html=True)
     
+    # pH
     with st.expander("🔵  pH — Derajat Keasaman Air", expanded=True):
         col_a, col_b = st.columns([1, 1.4])
         with col_a:
             st.markdown("""
             *Apa itu pH?*
-            pH mengukur konsentrasi ion hidrogen dalam air dan menunjukkan seberapa asam atau basa suatu larutan.
+            pH mengukur konsentrasi ion hidrogen dalam air dan menunjukkan
+            seberapa asam atau basa suatu larutan. Skala pH berkisar 0–14,
+            di mana 7 bersifat netral.
+            
+            *Mengapa penting?*
+            pH mempengaruhi reaksi kimia dalam air, kelarutan logam berat,
+            dan kemampuan organisme akuatik untuk bertahan hidup.
+            Nilai di luar rentang 6–9 tidak memenuhi baku mutu air kelas II
+            sesuai PP No. 22 Tahun 2021.
             """)
         with col_b:
             if ph_cls == "good":
-                st.markdown(f'<div class="info-box">✅ <strong>pH {ph_val}</strong> — Nilai ini memenuhi baku mutu air kelas II (6–9) sesuai PP No. 22 Tahun 2021. Air dalam kondisi normal dan aman.</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="info-box">✅ <strong>pH {ph_val}</strong> — Nilai ini memenuhi baku mutu air kelas II (6–9) sesuai PP No. 22 Tahun 2021. Air dalam kondisi normal dan aman untuk berbagai pemanfaatan.</div>', unsafe_allow_html=True)
             else:
-                st.markdown(f'<div class="bad-box">🚨 <strong>pH {ph_val}</strong> — Nilai ini tidak memenuhi baku mutu air kelas II (6–9) sesuai PP No. 22 Tahun 2021. Air terindikasi tidak normal.</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="bad-box">🚨 <strong>pH {ph_val}</strong> — Nilai ini tidak memenuhi baku mutu air kelas II (6–9) sesuai PP No. 22 Tahun 2021. Air terindikasi sangat asam atau sangat basa, berbahaya bagi biota air dan tidak layak untuk penggunaan langsung.</div>', unsafe_allow_html=True)
 
+    # BOD
     with st.expander("🟢  BOD — Biochemical Oxygen Demand", expanded=True):
         col_a, col_b = st.columns([1, 1.4])
         with col_a:
             st.markdown("""
             *Apa itu BOD?*
-            BOD adalah jumlah oksigen yang dibutuhkan mikroorganisme untuk mengurai bahan organik dalam air secara biologis.
+            BOD adalah jumlah oksigen yang dibutuhkan oleh mikroorganisme
+            untuk mengurai bahan organik dalam air secara biologis
+            pada kondisi tertentu (biasanya 5 hari, 20°C).
+            
+            *Mengapa penting?*
+            BOD tinggi menandakan banyak bahan organik terlarut,
+            yang menyebabkan deplesi oksigen terlarut (DO), membunuh
+            ikan dan biota akuatik, serta menandakan pencemaran dari
+            limbah domestik/industri.
             """)
         with col_b:
             if bod_cls == "good":
-                st.markdown(f'<div class="info-box">✅ <strong>BOD {bod_val} mg/L</strong> — Memenuhi baku mutu. Kandungan bahan organik rendah dan ekosistem aman.</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="info-box">✅ <strong>BOD {bod_val} mg/L</strong> — Memenuhi baku mutu. Kandungan bahan organik rendah, oksigen terlarut cukup untuk mendukung ekosistem perairan.</div>', unsafe_allow_html=True)
             elif bod_cls == "warn":
-                st.markdown(f'<div class="warn-box">⚠️ <strong>BOD {bod_val} mg/L</strong> — Melewati baku mutu (3 mg/L). Air terindikasi tercemar ringan/sedang.</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="warn-box">⚠️ <strong>BOD {bod_val} mg/L</strong> — Melewati baku mutu (3 mg/L). Air terindikasi tercemar bahan organik. Dapat mengganggu kehidupan biota air.</div>', unsafe_allow_html=True)
             else:
-                st.markdown(f'<div class="bad-box">🚨 <strong>BOD {bod_val} mg/L</strong> — Jauh melampaui baku mutu! Terjadi pencemaran organik berat.</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="bad-box">🚨 <strong>BOD {bod_val} mg/L</strong> — Jauh melampaui baku mutu! Pencemaran organik berat. Air tidak layak pakai tanpa pengolahan intensif.</div>', unsafe_allow_html=True)
 
+    # COD
     with st.expander("🔴  COD — Chemical Oxygen Demand", expanded=True):
         col_a, col_b = st.columns([1, 1.4])
         with col_a:
             st.markdown("""
             *Apa itu COD?*
-            COD mengukur total oksigen yang dibutuhkan untuk mengoksidasi seluruh bahan organik dalam air secara kimiawi.
+            COD mengukur total oksigen yang dibutuhkan untuk mengoksidasi
+            seluruh bahan organik (termasuk yang tidak bisa diurai secara
+            biologis) menggunakan oksidator kimia kuat.
+            
+            *Mengapa penting?*
+            COD selalu lebih tinggi dari BOD. Rasio COD/BOD yang besar
+            menandakan adanya senyawa organik sulit terurai (rekalcitran)
+            seperti pestisida, deterjen, atau limbah industri kimia.
             """)
         with col_b:
             if cod_cls == "good":
-                st.markdown(f'<div class="info-box">✅ <strong>COD {cod_val} mg/L</strong> — Memenuhi baku mutu. Beban pencemar organik kimiawi dalam batas aman.</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="info-box">✅ <strong>COD {cod_val} mg/L</strong> — Memenuhi baku mutu. Beban pencemar organik dan kimia masih dalam batas aman.</div>', unsafe_allow_html=True)
             elif cod_cls == "warn":
-                st.markdown(f'<div class="warn-box">⚠️ <strong>COD {cod_val} mg/L</strong> — Melampaui baku mutu. Indikasi masuknya pencemar kimia organik.</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="warn-box">⚠️ <strong>COD {cod_val} mg/L</strong> — Melampaui baku mutu. Indikasi pencemaran bahan kimia organik. Perlu investigasi sumber pencemar.</div>', unsafe_allow_html=True)
             else:
-                st.markdown(f'<div class="bad-box">🚨 <strong>COD {cod_val} mg/L</strong> — Sangat tinggi! Indikasi pencemaran limbah kimia berat.</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="bad-box">🚨 <strong>COD {cod_val} mg/L</strong> — Sangat tinggi! Indikasi pencemaran kimia berat. Air memerlukan pengolahan khusus sebelum digunakan.</div>', unsafe_allow_html=True)
 
+    # Rasio BOD/COD
     st.markdown('<div class="sec-head">Analisis Lanjutan</div>', unsafe_allow_html=True)
     if cod_val > 0:
         ratio = round(bod_val / cod_val, 3)
@@ -682,9 +767,10 @@ with tab1:
               <div class="param-fullname">Biodegradabilitas Limbah</div>
               <div class="param-value">{ratio}</div>
               <div style="margin-top:10px; font-size:0.83rem; color:#9AAABE; line-height:1.6;">
-                {'✅ <b style="color:#22C55E">Mudah terurai secara biologis</b> — Rasio > 0.5 menandakan limbah organik yang mudah diolah secara biologi.' if ratio >= 0.5 else ('⚠️ <b style="color:#F59E0B">Cukup dapat terurai</b> — Perlu monitoring kombinasi kimia-biologi.' if ratio >= 0.3 else '🔴 <b style="color:#EF4444">Sulit terurai secara biologis</b> — Rasio < 0.3 mengindikasikan dominasi limbah kimia anorganik/non-biodegradable.')}
+                {'✅ <b style="color:#22C55E">Mudah terurai secara biologis</b> — Rasio > 0.5 menandakan limbah organik yang dapat diolah dengan proses biologis (IPAL).' if ratio >= 0.5 else ('⚠️ <b style="color:#F59E0B">Cukup dapat terurai</b> — Perlu kombinasi pengolahan biologis dan kimia.' if ratio >= 0.3 else '🔴 <b style="color:#EF4444">Sulit terurai secara biologis</b> — Rasio < 0.3 mengindikasikan bahan kimia organik rekalcitran. Perlu pengolahan kimia-fisika.')}
               </div>
             </div>""", unsafe_allow_html=True)
+            
         with col2:
             st.markdown(f"""
             <div class="param-card">
@@ -720,15 +806,53 @@ with tab1:
 # ══════════════════════════════════════════════
 with tab2:
     st.markdown('<div class="sec-head">Baku Mutu Air — PP No. 22 Tahun 2021</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="info-box">
+    📋 Tabel referensi di bawah berdasarkan <b>Peraturan Pemerintah No. 22 Tahun 2021</b>
+    tentang Penyelenggaraan Perlindungan dan Pengelolaan Lingkungan Hidup,
+    serta <b>Peraturan Menteri LHK</b> tentang Baku Mutu Air Permukaan.
+    Kelas air yang digunakan sebagai acuan utama adalah <b>Kelas II</b>
+    (peruntukan rekreasi, budidaya ikan, dan peternakan).
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("#### 🔵 pH — Derajat Keasaman")
+    st.markdown("""
+    <div style="font-size:0.83rem; color:#9AAABE; margin-bottom:10px;">
+    Baku mutu pH air kelas II sesuai PP No. 22 Tahun 2021: <b style="color:#0EB8A4;">6 – 9</b>
+    </div>""", unsafe_allow_html=True)
     render_ref_table(PH_REF)
     
     st.markdown("<br>#### 🟢 BOD — Biochemical Oxygen Demand", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="font-size:0.83rem; color:#9AAABE; margin-bottom:10px;">
+    Baku mutu BOD air kelas II: <b style="color:#0EB8A4;">≤ 3 mg/L</b>
+    </div>""", unsafe_allow_html=True)
     render_ref_table(BOD_REF)
     
     st.markdown("<br>#### 🔴 COD — Chemical Oxygen Demand", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="font-size:0.83rem; color:#9AAABE; margin-bottom:10px;">
+    Baku mutu COD air kelas II: <b style="color:#0EB8A4;">≤ 25 mg/L</b>
+    </div>""", unsafe_allow_html=True)
     render_ref_table(COD_REF)
+    
+    st.markdown('<div class="sec-head">Kategori Indeks Kualitas Air (IKA)</div>', unsafe_allow_html=True)
+    ika_table = [
+        {"Skor IKA": "80 – 100", "Kategori": "Baik", "Keterangan": "Air berkualitas tinggi, aman untuk semua peruntukan", "Kelas": "good"},
+        {"Skor IKA": "50 – 79",  "Kategori": "Tercemar Ringan–Sedang", "Keterangan": "Perlu monitoring; beberapa parameter mendekati/melampaui batas", "Kelas": "warn"},
+        {"Skor IKA": "25 – 49",  "Kategori": "Tercemar Berat", "Keterangan": "Pengolahan diperlukan; tidak layak pakai langsung", "Kelas": "bad"},
+        {"Skor IKA": "0 – 24",   "Kategori": "Sangat Tercemar Berat", "Keterangan": "Berbahaya; membutuhkan remediasi intensif", "Kelas": "bad"},
+    ]
+    rows = ""
+    for r in ika_table:
+        chip = status_chip(r["Kategori"], r["Kelas"])
+        rows += f"<tr><td><b style='font-family:Space Mono;color:#0EB8A4;'>{r['Skor IKA']}</b></td><td>{chip}</td><td>{r['Keterangan']}</td></tr>"
+    st.markdown(f"""
+    <table class="ref-table">
+      <thead><tr><th>Skor IKA</th><th>Kategori</th><th>Keterangan</th></tr></thead>
+      <tbody>{rows}</tbody>
+    </table>""", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════
 #  TAB 3 — VISUALISASI
@@ -737,14 +861,16 @@ with tab3:
     st.markdown('<div class="sec-head">Visualisasi Posisi Parameter</div>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     
+    # ── Gauge IKA ──
     with col1:
         fig_gauge = go.Figure(go.Indicator(
             mode="gauge+number",
             value=ika_score,
             title={"text": "Indeks Kualitas Air (IKA)", "font": {"color": "#E8EDF5", "size": 14}},
-            number={"font": {"color": ika_color, "size": 48}},
+            number={"font": {"color": ika_color, "size": 48}, "suffix": ""},
             gauge={
-                "axis": {"range": [0, 100], "tickcolor": "#7A8BA6", "tickfont": {"color": "#7A8BA6"}},
+                "axis": {"range": [0, 100], "tickcolor": "#7A8BA6",
+                         "tickfont": {"color": "#7A8BA6", "size": 11}},
                 "bar": {"color": ika_color, "thickness": 0.25},
                 "bgcolor": "#161B25",
                 "borderwidth": 0,
@@ -754,11 +880,18 @@ with tab3:
                     {"range": [50, 80], "color": "rgba(245,158,11,0.10)"},
                     {"range": [80, 100],"color": "rgba(34,197,94,0.12)"},
                 ],
+                "threshold": {"line": {"color": ika_color, "width": 3},
+                              "thickness": 0.75, "value": ika_score},
             }
         ))
-        fig_gauge.update_layout(paper_bgcolor="#0D1117", plot_bgcolor="#0D1117", font={"color": "#E8EDF5"}, height=300)
+        fig_gauge.update_layout(
+            paper_bgcolor="#0D1117", plot_bgcolor="#0D1117",
+            font={"color": "#E8EDF5"}, height=300,
+            margin=dict(l=30, r=30, t=40, b=10)
+        )
         st.plotly_chart(fig_gauge, use_container_width=True)
         
+    # ── Radar Sub-Indeks ──
     with col2:
         categories = ["pH", "BOD", "COD"]
         values = [ph_si, bod_si, cod_si]
@@ -768,19 +901,70 @@ with tab3:
             fill="toself",
             fillcolor="rgba(14,184,164,0.15)",
             line=dict(color="#0EB8A4", width=2),
+            name="Sub-Indeks",
+        ))
+        fig_radar.add_trace(go.Scatterpolar(
+            r=[100, 100, 100, 100],
+            theta=categories + [categories[0]],
+            fill="toself",
+            fillcolor="rgba(255,255,255,0.02)",
+            line=dict(color="#242C3D", width=1, dash="dot"),
+            name="Batas Maksimal",
         ))
         fig_radar.update_layout(
             polar=dict(
                 bgcolor="#161B25",
-                radialaxis=dict(visible=True, range=[0, 100], gridcolor="#242C3D"),
-                angularaxis=dict(gridcolor="#242C3D"),
+                radialaxis=dict(visible=True, range=[0, 100],
+                                tickfont={"color": "#7A8BA6", "size": 10},
+                                gridcolor="#242C3D", linecolor="#242C3D"),
+                angularaxis=dict(tickfont={"color": "#E8EDF5", "size": 12},
+                                 gridcolor="#242C3D", linecolor="#242C3D"),
             ),
-            paper_bgcolor="#0D1117", plot_bgcolor="#0D1117", font={"color": "#E8EDF5"}, height=300, showlegend=False
+            paper_bgcolor="#0D1117",
+            plot_bgcolor="#0D1117",
+            font={"color": "#E8EDF5"},
+            showlegend=False,
+            title={"text": "Sub-Indeks Tiap Parameter",
+                   "font": {"color": "#E8EDF5", "size": 14}},
+            height=300,
+            margin=dict(l=30, r=30, t=50, b=20)
         )
         st.plotly_chart(fig_radar, use_container_width=True)
+        
+    # ── Bar chart posisi vs batas ──
+    st.markdown('<div class="sec-head">Posisi Nilai vs Batas Baku Mutu</div>', unsafe_allow_html=True)
+    fig_bar = make_subplots(rows=1, cols=3, subplot_titles=["pH", "BOD (mg/L)", "COD (mg/L)"])
+    fig_bar.add_trace(go.Bar(x=["Nilai Kamu"], y=[ph_val],
+                              marker_color=("#22C55E" if ph_cls=="good" else "#F59E0B" if ph_cls=="warn" else "#EF4444"),
+                              name="pH"), row=1, col=1)
+    fig_bar.add_hline(y=6.0, line_dash="dash", line_color="#7A8BA6",
+                       annotation_text="Min 6", annotation_font_color="#7A8BA6", row=1, col=1)
+    fig_bar.add_hline(y=9.0, line_dash="dash", line_color="#7A8BA6",
+                       annotation_text="Max 9", annotation_font_color="#7A8BA6", row=1, col=1)
+    fig_bar.add_trace(go.Bar(x=["Nilai Kamu"], y=[bod_val],
+                              marker_color=("#22C55E" if bod_cls=="good" else "#F59E0B" if bod_cls=="warn" else "#EF4444"),
+                              name="BOD"), row=1, col=2)
+    fig_bar.add_hline(y=3.0, line_dash="dash", line_color="#7A8BA6",
+                       annotation_text="Batas 3 mg/L", annotation_font_color="#7A8BA6", row=1, col=2)
+    fig_bar.add_trace(go.Bar(x=["Nilai Kamu"], y=[cod_val],
+                              marker_color=("#22C55E" if cod_cls=="good" else "#F59E0B" if cod_cls=="warn" else "#EF4444"),
+                              name="COD"), row=1, col=3)
+    fig_bar.add_hline(y=25.0, line_dash="dash", line_color="#7A8BA6",
+                       annotation_text="Batas 25 mg/L", annotation_font_color="#7A8BA6", row=1, col=3)
+    fig_bar.update_layout(
+        paper_bgcolor="#0D1117", plot_bgcolor="#0D1117",
+        font={"color": "#E8EDF5", "size": 12},
+        showlegend=False, height=320,
+        margin=dict(l=20, r=20, t=50, b=20),
+    )
+    fig_bar.update_xaxes(showgrid=False, zeroline=False)
+    fig_bar.update_yaxes(gridcolor="#242C3D", zeroline=False)
+    for ann in fig_bar.layout.annotations:
+        ann.font.color = "#E8EDF5"
+    st.plotly_chart(fig_bar, use_container_width=True)
 
 # ══════════════════════════════════════════════
-#  TAB 4 — TENTANG KELOMPOK
+#  TAB 4 — TENTANG
 # ══════════════════════════════════════════════
 with tab4:
     st.markdown('<div class="sec-head">Tentang Aplikasi & Kelompok</div>', unsafe_allow_html=True)
@@ -800,3 +984,64 @@ with tab4:
           <div class="about-title">👥 {st.session_state.group_name}</div>
           <div class="about-body">{group_desc_html}</div>
         </div>""", unsafe_allow_html=True)
+        
+    st.markdown("""
+    <div class="about-card">
+      <div class="about-label">Parameter yang Dianalisis</div>
+      <div class="about-title">🧪 Parameter Kimia Kualitas Air</div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:12px;">
+        <div style="flex:1; min-width:180px; background:#0D1117; border-radius:10px; padding:16px;
+                    border:1px solid #242C3D;">
+          <div style="font-family:'Space Mono',monospace; color:#0EB8A4; font-size:1.1rem;
+                      font-weight:700; margin-bottom:6px;">pH</div>
+          <div style="color:#9AAABE; font-size:0.83rem; line-height:1.6;">
+            Derajat keasaman air. Mengukur konsentrasi ion H⁺.
+            Baku mutu kelas II sesuai PP No. 22 Tahun 2021: 6–9.
+          </div>
+        </div>
+        <div style="flex:1; min-width:180px; background:#0D1117; border-radius:10px; padding:16px;
+                    border:1px solid #242C3D;">
+          <div style="font-family:'Space Mono',monospace; color:#1A6EFC; font-size:1.1rem;
+                      font-weight:700; margin-bottom:6px;">BOD</div>
+          <div style="color:#9AAABE; font-size:0.83rem; line-height:1.6;">
+            Biochemical Oxygen Demand. Kebutuhan oksigen untuk degradasi
+            bahan organik secara biologis. Baku mutu ≤ 3 mg/L.
+          </div>
+        </div>
+        <div style="flex:1; min-width:180px; background:#0D1117; border-radius:10px; padding:16px;
+                    border:1px solid #242C3D;">
+          <div style="font-family:'Space Mono',monospace; color:#8B5CF6; font-size:1.1rem;
+                      font-weight:700; margin-bottom:6px;">COD</div>
+          <div style="color:#9AAABE; font-size:0.83rem; line-height:1.6;">
+            Chemical Oxygen Demand. Total oksigen untuk mengoksidasi
+            semua bahan organik secara kimiawi. Baku mutu ≤ 25 mg/L.
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="about-card" style="border-color:rgba(14,184,164,0.3);">
+      <div class="about-label">Metodologi IKA</div>
+      <div class="about-title">📐 Cara Perhitungan Indeks</div>
+      <div class="about-body">
+        Indeks Kualitas Air (IKA) dihitung menggunakan sistem sub-indeks berbobot:
+        <br><br>
+        <code style="background:#0D1117; padding:10px 16px; border-radius:6px;
+                     border:1px solid #242C3D; display:block; margin:8px 0;
+                     font-family:'Space Mono',monospace; color:#0EB8A4; font-size:0.85rem;">
+          IKA = (0.30 × SI_pH) + (0.35 × SI_BOD) + (0.35 × SI_COD)
+        </code>
+        Di mana SI (Sub-Indeks) bernilai 0–100 berdasarkan posisi nilai terhadap baku mutu.
+        Bobot lebih besar pada BOD dan COD karena keduanya langsung mencerminkan
+        beban pencemaran organik yang paling umum di perairan Indonesia.
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="text-align:center; padding:24px 0 8px; color:#9AAABE; font-size:0.78rem;
+                font-family:'Space Mono',monospace;">
+        Referensi: PP No. 22/2021 · PermenLHK P.22/2021 · SNI 6989<br>
+        Built with Streamlit & Plotly
+    </div>
+    """, unsafe_allow_html=True)
