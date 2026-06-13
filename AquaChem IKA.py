@@ -41,36 +41,67 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-#  GLOBAL CSS (SUDAH DIPERBAIKI UNTUK LIGHT & DARK MODE)
+#  GLOBAL CSS (TELAH DIPERBAIKI)
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-/* Menggunakan variabel warna bawaan Streamlit agar adaptif */
-html, body, [class*="css"], .stApp {
+/* Root Variables */
+:root {
+    --teal:   #0EB8A4;
+    --blue:   #1A6EFC;
+    --indigo: #2D3A8C;
+    --dark:   #0D1117;
+    --card:   #161B25;
+    --border: #242C3D;
+    --text:   var(--text-color, #111827);
+    --muted:  #7A8BA6;
+    --good:   #22C55E;
+    --warn:   #F59E0B;
+    --bad:    #EF4444;
+}
+
+html, body, [class*="css"] {
     font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--dark);
+    color: var(--text);
 }
 
-/* Override global text agar mematuhi tema Streamlit */
-.stMarkdown p, .stMarkdown li, .stMarkdown span, .stMarkdown div, 
-.stNumberInput label, .stTextInput label, .stTextArea label, .stSlider>label,
-[data-testid="stCaptionContainer"], [data-testid="stWidgetLabel"] {
-    font-weight: 600;
-}
+/* Improve readability without overriding component themes */
+body,.stApp{color:var(--text);}
+.stMarkdown p,.stMarkdown li,.stMarkdown span,.stMarkdown div{color:inherit !important;}
+.stNumberInput label,.stTextInput label,.stTextArea label,.stSlider>label{color:var(--text-color, #111827) !important;font-weight:600;}
+[data-testid="stCaptionContainer"],[data-testid="stWidgetLabel"]{color:var(--text-color, #111827) !important;}
 
-/* Sembunyikan default branding */
+/* Hide default streamlit branding */
 #MainMenu, footer, header {visibility: hidden;}
 
 /* Hero Banner */
 .hero {
-    background: linear-gradient(135deg, rgba(13,17,23,0.9) 0%, rgba(10,42,64,0.9) 50%, rgba(13,17,23,0.9) 100%);
-    border: 1px solid rgba(14,184,164,0.3);
+    background: linear-gradient(135deg, #0D1117 0%, #0a2a40 50%, #0D1117 100%);
+    border: 1px solid var(--border);
     border-radius: 16px;
     padding: 40px 36px 32px;
     margin-bottom: 28px;
     position: relative;
     overflow: hidden;
+}
+.hero::before {
+    content: "";
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(14,184,164,0.18) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.hero::after {
+    content: "";
+    position: absolute;
+    bottom: -80px; left: 10%;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(26,110,252,0.12) 0%, transparent 70%);
+    border-radius: 50%;
 }
 .hero-title {
     font-family: 'Space Mono', monospace;
@@ -82,12 +113,16 @@ html, body, [class*="css"], .stApp {
     margin: 0 0 8px 0;
     line-height: 1.2;
 }
+
+/* PERBAIKAN: Memaksa teks sub-deskripsi berwarna putih cerah agar kontras tinggi */
 .hero-sub {
+    color: rgba(255, 255, 255, 0.9) !important;
     font-size: 1rem;
-    margin: 0;
+    margin: 0 0 16px 0;
     font-weight: 400;
-    opacity: 0.9;
+    line-height: 1.6;
 }
+
 .hero-info {
     display: inline-block;
     background: rgba(14,184,164,0.15);
@@ -113,16 +148,16 @@ html, body, [class*="css"], .stApp {
     margin-bottom: 12px;
 }
 
-/* Cards & Containers - Transparan adaptif dengan border tipis */
+/* Cards */
 .param-card {
-    background: rgba(128, 128, 128, 0.08);
-    border: 1px solid rgba(128, 128, 128, 0.2);
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 14px;
     padding: 24px 22px;
     height: 100%;
     transition: border-color 0.2s;
 }
-.param-card:hover { border-color: #0EB8A4; }
+.param-card:hover { border-color: var(--teal); }
 .param-title {
     font-family: 'Space Mono', monospace;
     font-size: 1rem;
@@ -132,23 +167,22 @@ html, body, [class*="css"], .stApp {
     letter-spacing: 0.5px;
 }
 .param-fullname {
+    color: #BFC9D8 !important;
     font-size: 0.8rem;
-    opacity: 0.75;
     margin-bottom: 16px;
 }
 .param-value {
     font-size: 2.4rem;
     font-weight: 800;
+    color: var(--text-color, #111827) !important;
     line-height: 1;
     margin-bottom: 4px;
 }
 .param-unit {
     font-size: 0.8rem;
-    opacity: 0.7;
+    color: #BFC9D8 !important;
     margin-bottom: 14px;
 }
-
-/* Chips Status */
 .status-chip {
     display: inline-block;
     padding: 4px 12px;
@@ -174,14 +208,15 @@ html, body, [class*="css"], .stApp {
     font-size: 0.75rem;
     padding: 10px 14px;
     text-align: left;
-    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    border-bottom: 1px solid var(--border);
 }
 .ref-table td {
     padding: 10px 14px;
-    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    border-bottom: 1px solid var(--border);
+    color: var(--text-color, #111827) !important;
 }
 .ref-table tr:last-child td { border-bottom: none; }
-.ref-table tr:hover td { background: rgba(128,128,128,0.05); }
+.ref-table tr:hover td { background: rgba(255,255,255,0.02); }
 
 /* Section Header */
 .sec-head {
@@ -199,10 +234,10 @@ html, body, [class*="css"], .stApp {
     content: "";
     flex: 1;
     height: 1px;
-    background: rgba(128, 128, 128, 0.2);
+    background: var(--border);
 }
 
-/* IKA Score Ring */
+/* IKA Score */
 .ika-ring {
     text-align: center;
     padding: 16px 0;
@@ -215,7 +250,7 @@ html, body, [class*="css"], .stApp {
 }
 .ika-label {
     font-size: 0.85rem;
-    opacity: 0.75;
+    color: #BFC9D8 !important;
     margin-top: 6px;
 }
 .ika-cat {
@@ -224,42 +259,48 @@ html, body, [class*="css"], .stApp {
     margin-top: 8px;
 }
 
-/* Info, Warning, and Bad Boxes */
+/* Info box */
 .info-box {
-    background: rgba(14,184,164,0.08);
+    background: rgba(14,184,164,0.06);
     border: 1px solid rgba(14,184,164,0.25);
-    border-left: 4px solid #0EB8A4;
+    border-left: 4px solid var(--teal);
     border-radius: 8px;
     padding: 14px 18px;
     font-size: 0.88rem;
+    color: var(--text-color, #111827) !important;
     margin: 10px 0;
     line-height: 1.6;
 }
 .warn-box {
-    background: rgba(245,158,11,0.08);
+    background: rgba(245,158,11,0.06);
     border: 1px solid rgba(245,158,11,0.25);
     border-left: 4px solid #F59E0B;
     border-radius: 8px;
     padding: 14px 18px;
     font-size: 0.88rem;
+    color: var(--text-color, #111827) !important;
     margin: 10px 0;
     line-height: 1.6;
 }
 .bad-box {
-    background: rgba(239,68,68,0.08);
+    background: rgba(239,68,68,0.06);
     border: 1px solid rgba(239,68,68,0.25);
     border-left: 4px solid #EF4444;
     border-radius: 8px;
     padding: 14px 18px;
     font-size: 0.88rem;
+    color: var(--text-color, #111827) !important;
     margin: 10px 0;
     line-height: 1.6;
 }
 
-/* About Section */
+/* Divider */
+.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+/* About section */
 .about-card {
-    background: rgba(128, 128, 128, 0.08);
-    border: 1px solid rgba(128, 128, 128, 0.2);
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 14px;
     padding: 28px 26px;
     margin-bottom: 18px;
@@ -275,17 +316,46 @@ html, body, [class*="css"], .stApp {
 .about-title {
     font-size: 1.3rem;
     font-weight: 700;
+    color: var(--text-color, #111827) !important;
     margin-bottom: 10px;
 }
 .about-body {
-    opacity: 0.85;
+    color: #BFC9D8 !important;
     font-size: 0.9rem;
     line-height: 1.7;
 }
 
-/* Custom Buttons Override */
+/* Metric strip */
+.metric-strip {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.metric-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+    flex: 1;
+    min-width: 120px;
+}
+.metric-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0EB8A4 !important;
+}
+.metric-desc {
+    font-size: 0.78rem;
+    color: #BFC9D8 !important;
+    margin-top: 2px;
+}
+
+/* Streamlit overrides */
+.stSlider > label { color: #BFC9D8 !important; font-size: 0.85rem !important; }
 .stButton > button {
-    background: linear-gradient(135deg, #0EB8A4, #1A6EFC);
+    background: linear-gradient(135deg, var(--teal), var(--blue));
     color: white !important;
     border: none;
     border-radius: 8px;
@@ -296,11 +366,41 @@ html, body, [class*="css"], .stApp {
     transition: opacity 0.2s;
     width: 100%;
 }
-.stButton > button:hover { opacity: 0.85; color: white !important; }
+.stButton > button:hover { opacity: 0.85; }
+div[data-testid="stExpander"] {
+    background: var(--card);
+    border: 1px solid var(--border) !important;
+    border-radius: 10px !important;
+}
+div[data-testid="stExpander"] summary { color: var(--text-color, #111827) !important; }
 
-/* Menyelaraskan warna teks bawaan input Streamlit */
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 4px;
+    gap: 4px;
+}
+.stTabs [data-baseweb="tab"] {
+    background: transparent !important;
+    color: #BFC9D8 !important;
+    border-radius: 7px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, rgba(14,184,164,0.25), rgba(26,110,252,0.25)) !important;
+    color: var(--text-color, #111827) !important;
+}
+
+/* Number input, text labels */
+.stNumberInput label, .stTextInput label, .stTextArea label {
+    color: var(--text-color, #111827) !important;
+}
 input, textarea {
-    font-weight: 500 !important;
+    color: var(--text-color, #111827) !important;
+    background-color: #1E2533 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -474,7 +574,7 @@ with btn_col2:
 
 # Menampilkan indikator status mode yang sedang aktif saat ini
 st.markdown(f"""
-<div style="font-size:0.9rem; margin-bottom:20px;">
+<div style="font-size:0.9rem; margin-bottom:20px; color:#BFC9D8;">
     Mode aktif saat ini: <span style="color:#0EB8A4; font-weight:bold; font-family:'Space Mono', monospace;">{st.session_state.main_input_mode}</span>
 </div>
 """, unsafe_allow_html=True)
@@ -486,8 +586,7 @@ cod_val = 15.0
 
 # Wadah penampung form input data lapangan utama
 with st.container():
-    # Menggunakan rgba transparan agar mengikuti background app bawaan
-    st.markdown('<div style="background:rgba(128,128,128,0.05); border:1px solid rgba(128,128,128,0.2); border-radius:14px; padding:24px; margin-bottom:25px;">', unsafe_allow_html=True)
+    st.markdown('<div style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:25px;">', unsafe_allow_html=True)
     
     # Input umum pH (Selalu muncul di kedua mode)
     ph_val = st.number_input("Masukkan Nilai pH", min_value=0.0, max_value=14.0, value=7.0, step=0.1,
@@ -507,7 +606,7 @@ with st.container():
         # ── BOD dari Titrasi Winkler ──
         st.markdown("""<div style="font-size:0.9rem; color:#0EB8A4; font-family:'Space Mono',monospace;
                        margin:15px 0 6px 0; font-weight:bold;">🔬 Perhitungan Parameter BOD — Titrasi Winkler</div>""", unsafe_allow_html=True)
-        st.markdown("""<div style="font-size:0.75rem; opacity:0.8; margin-bottom:8px;">
+        st.markdown("""<div style="font-size:0.75rem; color:#BFC9D8; margin-bottom:8px;">
             Rumus: BOD = (V_titran_blanko − V_titran_sampel) × N_Na₂S₂O₃ × 8000 / V_sampel
             </div>""", unsafe_allow_html=True)
         col_b1, col_b2 = st.columns(2)
@@ -523,14 +622,14 @@ with st.container():
             bod_val = 0.0
             
         st.markdown(f"""<div style="background:rgba(14,184,164,0.08); border:1px solid rgba(14,184,164,0.3);
-                        border-radius:8px; padding:10px 14px; font-size:0.85rem; margin:6px 0 20px 0;">
+                        border-radius:8px; padding:10px 14px; font-size:0.85rem; margin:6px 0 20px 0; color:var(--text-color, #111827);">
                         Hasil Perhitungan Terhitung BOD: <b style="color:#0EB8A4; font-family:'Space Mono',monospace;">
                         {bod_val} mg/L</b></div>""", unsafe_allow_html=True)
         
         # ── COD dari Titrasi Permanganometri / Dikromat ──
         st.markdown("""<div style="font-size:0.9rem; color:#8B5CF6; font-family:'Space Mono',monospace;
                        margin:15px 0 6px 0; font-weight:bold;">🔬 Perhitungan Parameter COD — Titrasi Dikromat / Permanganometri</div>""", unsafe_allow_html=True)
-        st.markdown("""<div style="font-size:0.75rem; opacity:0.8; margin-bottom:8px;">
+        st.markdown("""<div style="font-size:0.75rem; color:#BFC9D8; margin-bottom:8px;">
             Rumus: COD = (V_blanko − V_sampel) × N_titran × 8000 / V_sampel
             </div>""", unsafe_allow_html=True)
         col_c1, col_c2 = st.columns(2)
@@ -546,7 +645,7 @@ with st.container():
             cod_val = 0.0
             
         st.markdown(f"""<div style="background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.3);
-                        border-radius:8px; padding:10px 14px; font-size:0.85rem; margin:6px 0 4px 0;">
+                        border-radius:8px; padding:10px 14px; font-size:0.85rem; margin:6px 0 4px 0; color:var(--text-color, #111827);">
                         Hasil Perhitungan Terhitung COD: <b style="color:#8B5CF6; font-family:'Space Mono',monospace;">
                         {cod_val} mg/L</b></div>""", unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -700,7 +799,7 @@ with tab1:
               <div class="param-title">Rasio BOD/COD</div>
               <div class="param-fullname">Biodegradabilitas Limbah</div>
               <div class="param-value">{ratio}</div>
-              <div style="margin-top:10px; font-size:0.83rem; line-height:1.6;">
+              <div style="margin-top:10px; font-size:0.83rem; color:#BFC9D8; line-height:1.6;">
                 {'✅ <b style="color:#22C55E">Mudah terurai secara biologis</b> — Rasio > 0.5 menandakan limbah organik yang dapat diolah dengan proses biologis (IPAL).' if ratio >= 0.5 else ('⚠️ <b style="color:#F59E0B">Cukup dapat terurai</b> — Perlu kombinasi pengolahan biologis dan kimia.' if ratio >= 0.3 else '🔴 <b style="color:#EF4444">Sulit terurai secara biologis</b> — Rasio < 0.3 mengindikasikan bahan kimia organik rekalcitran. Perlu pengolahan kimia-fisika.')}
               </div>
             </div>""", unsafe_allow_html=True)
@@ -712,32 +811,32 @@ with tab1:
               <div class="param-fullname">Kontribusi terhadap IKA</div>
               <div style="margin-top:14px;">
                 <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                  <span style="font-size:0.83rem;">pH (bobot 30%)</span>
+                  <span style="color:#BFC9D8; font-size:0.83rem;">pH (bobot 30%)</span>
                   <span style="font-family:'Space Mono',monospace; color:#0EB8A4;">{ph_si}</span>
                 </div>
-                <div style="background:rgba(128,128,128,0.2); border-radius:4px; height:6px; margin-bottom:12px;">
+                <div style="background:#242C3D; border-radius:4px; height:6px; margin-bottom:12px;">
                   <div style="background:#0EB8A4; width:{ph_si}%; height:100%; border-radius:4px;"></div>
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                  <span style="font-size:0.83rem;">BOD (bobot 35%)</span>
+                  <span style="color:#BFC9D8; font-size:0.83rem;">BOD (bobot 35%)</span>
                   <span style="font-family:'Space Mono',monospace; color:#1A6EFC;">{bod_si}</span>
                 </div>
-                <div style="background:rgba(128,128,128,0.2); border-radius:4px; height:6px; margin-bottom:12px;">
+                <div style="background:#242C3D; border-radius:4px; height:6px; margin-bottom:12px;">
                   <div style="background:#1A6EFC; width:{bod_si}%; height:100%; border-radius:4px;"></div>
                 </div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                  <span style="font-size:0.83rem;">COD (bobot 35%)</span>
+                  <span style="color:#BFC9D8; font-size:0.83rem;">COD (bobot 35%)</span>
                   <span style="font-family:'Space Mono',monospace; color:#8B5CF6;">{cod_si}</span>
                 </div>
-                <div style="background:rgba(128,128,128,0.2); border-radius:4px; height:6px;">
+                <div style="background:#242C3D; border-radius:4px; height:6px;">
                   <div style="background:#8B5CF6; width:{cod_si}%; height:100%; border-radius:4px;"></div>
                 </div>
               </div>
             </div>""", unsafe_allow_html=True)
 
-# ══════════════════════════════════════════════
+# ─────────────────────────────────────────────
 #  TAB 2 — REFERENSI
-# ══════════════════════════════════════════════
+# ─────────────────────────────────────────────
 with tab2:
     st.markdown('<div class="sec-head">Baku Mutu Air — PP No. 22 Tahun 2021</div>', unsafe_allow_html=True)
     st.markdown("""
@@ -752,21 +851,21 @@ with tab2:
     
     st.markdown("#### 🔵 pH — Derajat Keasaman")
     st.markdown("""
-    <div style="font-size:0.83rem; margin-bottom:10px;">
+    <div style="font-size:0.83rem; color:#BFC9D8; margin-bottom:10px;">
     Baku mutu pH air kelas II sesuai PP No. 22 Tahun 2021: <b style="color:#0EB8A4;">6 – 9</b>
     </div>""", unsafe_allow_html=True)
     render_ref_table(PH_REF)
     
     st.markdown("<br>#### 🟢 BOD — Biochemical Oxygen Demand", unsafe_allow_html=True)
     st.markdown("""
-    <div style="font-size:0.83rem; margin-bottom:10px;">
+    <div style="font-size:0.83rem; color:#BFC9D8; margin-bottom:10px;">
     Baku mutu BOD air kelas II: <b style="color:#0EB8A4;">≤ 3 mg/L</b>
     </div>""", unsafe_allow_html=True)
     render_ref_table(BOD_REF)
     
     st.markdown("<br>#### 🔴 COD — Chemical Oxygen Demand", unsafe_allow_html=True)
     st.markdown("""
-    <div style="font-size:0.83rem; margin-bottom:10px;">
+    <div style="font-size:0.83rem; color:#BFC9D8; margin-bottom:10px;">
     Baku mutu COD air kelas II: <b style="color:#0EB8A4;">≤ 25 mg/L</b>
     </div>""", unsafe_allow_html=True)
     render_ref_table(COD_REF)
@@ -788,9 +887,9 @@ with tab2:
       <tbody>{rows}</tbody>
     </table>""", unsafe_allow_html=True)
 
-# ══════════════════════════════════════════════
+# ─────────────────────────────────────────────
 #  TAB 3 — VISUALISASI
-# ══════════════════════════════════════════════
+# ─────────────────────────────────────────────
 with tab3:
     st.markdown('<div class="sec-head">Visualisasi Posisi Parameter</div>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
@@ -800,13 +899,13 @@ with tab3:
         fig_gauge = go.Figure(go.Indicator(
             mode="gauge+number",
             value=ika_score,
-            title={"text": "Indeks Kualitas Air (IKA)", "font": {"size": 14}},
+            title={"text": "Indeks Kualitas Air (IKA)", "font": {"color": "var(--text-color, #111827)", "size": 14}},
             number={"font": {"color": ika_color, "size": 48}, "suffix": ""},
             gauge={
                 "axis": {"range": [0, 100], "tickcolor": "#7A8BA6",
-                         "tickfont": {"size": 11}},
+                         "tickfont": {"color": "#7A8BA6", "size": 11}},
                 "bar": {"color": ika_color, "thickness": 0.25},
-                "bgcolor": "rgba(128,128,128,0.1)",
+                "bgcolor": "#161B25",
                 "borderwidth": 0,
                 "steps": [
                     {"range": [0, 25],  "color": "rgba(239,68,68,0.15)"},
@@ -819,8 +918,8 @@ with tab3:
             }
         ))
         fig_gauge.update_layout(
-            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-            height=300,
+            paper_bgcolor="#0D1117", plot_bgcolor="#0D1117",
+            font={"color": "var(--text-color, #111827)"}, height=300,
             margin=dict(l=30, r=30, t=40, b=10)
         )
         st.plotly_chart(fig_gauge, use_container_width=True)
@@ -841,23 +940,25 @@ with tab3:
             r=[100, 100, 100, 100],
             theta=categories + [categories[0]],
             fill="toself",
-            fillcolor="rgba(128,128,128,0.02)",
-            line=dict(color="rgba(128,128,128,0.3)", width=1, dash="dot"),
+            fillcolor="rgba(255,255,255,0.02)",
+            line=dict(color="#242C3D", width=1, dash="dot"),
             name="Batas Maksimal",
         ))
         fig_radar.update_layout(
             polar=dict(
-                bgcolor="rgba(128,128,128,0.05)",
+                bgcolor="#161B25",
                 radialaxis=dict(visible=True, range=[0, 100],
-                                tickfont={"size": 10},
-                                gridcolor="rgba(128,128,128,0.2)", linecolor="rgba(128,128,128,0.2)"),
-                angularaxis=dict(tickfont={"size": 12},
-                                 gridcolor="rgba(128,128,128,0.2)", linecolor="rgba(128,128,128,0.2)"),
+                                tickfont={"color": "#7A8BA6", "size": 10},
+                                gridcolor="#242C3D", linecolor="#242C3D"),
+                angularaxis=dict(tickfont={"color": "var(--text-color, #111827)", "size": 12},
+                                 gridcolor="#242C3D", linecolor="#242C3D"),
             ),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="#0D1117",
+            plot_bgcolor="#0D1117",
+            font={"color": "var(--text-color, #111827)"},
             showlegend=False,
-            title={"text": "Sub-Indeks Tiap Parameter", "font": {"size": 14}},
+            title={"text": "Sub-Indeks Tiap Parameter",
+                   "font": {"color": "var(--text-color, #111827)", "size": 14}},
             height=300,
             margin=dict(l=30, r=30, t=50, b=20)
         )
@@ -884,13 +985,15 @@ with tab3:
     fig_bar.add_hline(y=25.0, line_dash="dash", line_color="#7A8BA6",
                        annotation_text="Batas 25 mg/L", annotation_font_color="#7A8BA6", row=1, col=3)
     fig_bar.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font={"size": 12},
+        paper_bgcolor="#0D1117", plot_bgcolor="#0D1117",
+        font={"color": "var(--text-color, #111827)", "size": 12},
         showlegend=False, height=320,
         margin=dict(l=20, r=20, t=50, b=20),
     )
     fig_bar.update_xaxes(showgrid=False, zeroline=False)
-    fig_bar.update_yaxes(gridcolor="rgba(128,128,128,0.2)", zeroline=False)
+    fig_bar.update_yaxes(gridcolor="#242C3D", zeroline=False)
+    for ann in fig_bar.layout.annotations:
+        ann.font.color = "var(--text-color, #111827)"
     st.plotly_chart(fig_bar, use_container_width=True)
 
 # ══════════════════════════════════════════════
@@ -920,29 +1023,29 @@ with tab4:
       <div class="about-label">Parameter yang Dianalisis</div>
       <div class="about-title">🧪 Parameter Kimia Kualitas Air</div>
       <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:12px;">
-        <div style="flex:1; min-width:180px; background:rgba(128,128,128,0.05); border-radius:10px; padding:16px;
-                    border:1px solid rgba(128,128,128,0.2);">
+        <div style="flex:1; min-width:180px; background:#0D1117; border-radius:10px; padding:16px;
+                    border:1px solid #242C3D;">
           <div style="font-family:'Space Mono',monospace; color:#0EB8A4; font-size:1.1rem;
                       font-weight:700; margin-bottom:6px;">pH</div>
-          <div style="font-size:0.83rem; line-height:1.6; opacity:0.85;">
+          <div style="color:#BFC9D8; font-size:0.83rem; line-height:1.6;">
             Derajat keasaman air. Mengukur konsentrasi ion H⁺.
             Baku mutu kelas II sesuai PP No. 22 Tahun 2021: 6–9.
           </div>
         </div>
-        <div style="flex:1; min-width:180px; background:rgba(128,128,128,0.05); border-radius:10px; padding:16px;
-                    border:1px solid rgba(128,128,128,0.2);">
+        <div style="flex:1; min-width:180px; background:#0D1117; border-radius:10px; padding:16px;
+                    border:1px solid #242C3D;">
           <div style="font-family:'Space Mono',monospace; color:#1A6EFC; font-size:1.1rem;
                       font-weight:700; margin-bottom:6px;">BOD</div>
-          <div style="font-size:0.83rem; line-height:1.6; opacity:0.85;">
+          <div style="color:#BFC9D8; font-size:0.83rem; line-height:1.6;">
             Biochemical Oxygen Demand. Kebutuhan oksigen untuk degradasi
             bahan organik secara biologis. Baku mutu ≤ 3 mg/L.
           </div>
         </div>
-        <div style="flex:1; min-width:180px; background:rgba(128,128,128,0.05); border-radius:10px; padding:16px;
-                    border:1px solid rgba(128,128,128,0.2);">
+        <div style="flex:1; min-width:180px; background:#0D1117; border-radius:10px; padding:16px;
+                    border:1px solid #242C3D;">
           <div style="font-family:'Space Mono',monospace; color:#8B5CF6; font-size:1.1rem;
                       font-weight:700; margin-bottom:6px;">COD</div>
-          <div style="font-size:0.83rem; line-height:1.6; opacity:0.85;">
+          <div style="color:#BFC9D8; font-size:0.83rem; line-height:1.6;">
             Chemical Oxygen Demand. Total oksigen untuk mengoksidasi
             semua bahan organik secara kimiawi. Baku mutu ≤ 25 mg/L.
           </div>
@@ -956,8 +1059,8 @@ with tab4:
       <div class="about-body">
         Indeks Kualitas Air (IKA) dihitung menggunakan sistem sub-indeks berbobot:
         <br><br>
-        <code style="background:rgba(128,128,128,0.1); padding:10px 16px; border-radius:6px;
-                     border:1px solid rgba(128,128,128,0.2); display:block; margin:8px 0;
+        <code style="background:#0D1117; padding:10px 16px; border-radius:6px;
+                     border:1px solid #242C3D; display:block; margin:8px 0;
                      font-family:'Space Mono',monospace; color:#0EB8A4; font-size:0.85rem;">
           IKA = (0.30 × SI_pH) + (0.35 × SI_BOD) + (0.35 × SI_COD)
         </code>
@@ -969,7 +1072,7 @@ with tab4:
     """, unsafe_allow_html=True)
     
     st.markdown("""
-    <div style="text-align:center; padding:24px 0 8px; opacity:0.7; font-size:0.78rem;
+    <div style="text-align:center; padding:24px 0 8px; color:#BFC9D8; font-size:0.78rem;
                 font-family:'Space Mono',monospace;">
         Referensi: PP No. 22/2021 · PermenLHK P.22/2021 · SNI 6989<br>
         Built with Streamlit & Plotly
