@@ -1,3 +1,4 @@
+
 # ===== AquaChem validation helper =====
 def _ac_validate_inputs(ph_value=None, bod_value=None, cod_value=None):
     vals = [("pH", ph_value), ("BOD", bod_value), ("COD", cod_value)]
@@ -41,7 +42,7 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-#  GLOBAL CSS (TELAH DIPERBAIKI)
+#  GLOBAL CSS
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
@@ -113,16 +114,12 @@ body,.stApp{color:var(--text);}
     margin: 0 0 8px 0;
     line-height: 1.2;
 }
-
-/* PERBAIKAN: Memaksa teks sub-deskripsi berwarna putih cerah agar kontras tinggi */
 .hero-sub {
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: var(--text-color, #111827) !important;
     font-size: 1rem;
-    margin: 0 0 16px 0;
+    margin: 0;
     font-weight: 400;
-    line-height: 1.6;
 }
-
 .hero-info {
     display: inline-block;
     background: rgba(14,184,164,0.15);
@@ -834,9 +831,9 @@ with tab1:
               </div>
             </div>""", unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  TAB 2 — REFERENSI
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 with tab2:
     st.markdown('<div class="sec-head">Baku Mutu Air — PP No. 22 Tahun 2021</div>', unsafe_allow_html=True)
     st.markdown("""
@@ -887,9 +884,9 @@ with tab2:
       <tbody>{rows}</tbody>
     </table>""", unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  TAB 3 — VISUALISASI
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 with tab3:
     st.markdown('<div class="sec-head">Visualisasi Posisi Parameter</div>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
